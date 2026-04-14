@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Veritas - Secure Fintech Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1955e6",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111621"
+                    },
+                    fontFamily: {
+                        display: "Domine"
+                    },
+                    borderRadius: {
+                        DEFAULT: "1rem",
+                        lg: "2rem",
+                        xl: "3rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="font-display bg-background-light dark:bg-background-dark antialiased">
+    <main class="min-h-screen w-full flex overflow-hidden">
+        <section
+            class="hidden lg:flex lg:w-[40%] bg-gradient-to-br from-primary via-[#0a3a9c] to-background-dark p-12 flex-col justify-between relative">
+            <div class="space-y-12 mt-12">
+                <div class="flex items-center gap-4 text-white">
+                    <div class="size-14 flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-xl">
+                        <svg class="size-8 text-white" fill="none" viewbox="0 0 48 48"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                fill="currentColor" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl font-black tracking-tight">Veritas</h1>
+                </div>
+                <div class="max-w-md">
+                    <h2 class="text-5xl font-bold text-white leading-tight">Welcome back</h2>
+                    <p class="text-white/70 text-xl mt-6 font-medium leading-relaxed">
+                        Log in to your secure Veritas account to manage your assets and view your latest financial
+                        insights.
+                    </p>
+                </div>
+            </div>
+            <div class="flex flex-col gap-6 text-white/60">
+                <div class="flex items-center gap-8 text-xs uppercase tracking-widest font-semibold">
+                    <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">security</span>
+                        256-bit encryption
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">verified_user</span>
+                        PCI DSS Compliant
+                    </span>
+                </div>
+                <p class="text-sm">© 2024 Veritas Fintech Solutions. All rights reserved.</p>
+            </div>
+        </section>
+        <section
+            class="w-full lg:w-[60%] bg-white dark:bg-slate-900 flex items-center justify-center p-6 sm:p-12 overflow-y-auto">
+            <div class="w-full max-w-[520px]">
+                <div class="lg:hidden flex items-center gap-3 text-primary mb-12 justify-center">
+                    <div class="size-10 flex items-center justify-center bg-primary/10 rounded-lg">
+                        <svg class="size-6 text-primary" fill="none" viewbox="0 0 48 48"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                fill="currentColor" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-slate-900 dark:text-slate-100 text-3xl font-black tracking-tight">Veritas</h1>
+                </div>
+                <div class="lg:hidden text-center mb-10">
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Welcome back</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2">Log in to your secure Veritas account</p>
+                </div>
+                <form class="space-y-6">
+                    <div class="flex flex-col gap-3">
+                        <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">I am</label>
+                        <div class="grid grid-cols-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl" id="role-toggle">
+                            <button
+                                class="py-3 text-sm font-bold rounded-lg bg-white dark:bg-slate-700 text-primary shadow-sm border border-slate-200 dark:border-slate-600 transition-all active-role"
+                                type="button" data-role="company">Company User</button>
+                            <button
+                                class="py-3 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"
+                                type="button" data-role="client">Client User</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Username or
+                            Email</label>
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-xl">mail</span>
+                            </div>
+                            <input
+                                class="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-400 transition-all"
+                                placeholder="name@company.com" type="email" />
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Password</label>
+                            <a class="text-xs font-semibold text-primary hover:underline" href="#">Forgot password?</a>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-xl">lock</span>
+                            </div>
+                            <input
+                                class="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-400 transition-all"
+                                placeholder="••••••••" type="password" />
+                            <button
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                                type="button">
+                                <span class="material-symbols-outlined text-xl">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input
+                            class="w-5 h-5 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary focus:ring-2 cursor-pointer"
+                            id="remember" type="checkbox" />
+                        <label class="text-sm text-slate-600 dark:text-slate-400 cursor-pointer" for="remember">Remember
+                            me</label>
+                    </div>
+                    <button
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.99] text-lg h-14 flex items-center justify-center"
+                        type="submit" onclick="handleLogin(event)">
+                        Sign In
+                    </button>
+                    <div class="relative flex py-4 items-center">
+                        <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                        <span class="flex-shrink mx-4 text-slate-400 text-xs font-medium uppercase tracking-widest">Or
+                            continue with</span>
+                        <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                    </div>
+                    <div>
+                        <button
+                            class="w-full flex items-center justify-center gap-3 py-4 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors bg-white dark:bg-slate-900 shadow-sm"
+                            type="button">
+                            <img alt="Google Logo" class="size-6"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSeh1hdsLqhDYB-09SZe5jZxRse5R42STOYzgeftVqxYed9LVCS7Dm-akxLo3JiiXW2WyKqTNJdmDeU1lOKNpUAvfnu-bniVSo-BJ6RV7gV-_ThX4mo3jC-hNMseIrnph3I1e6GbnLrLEa3LYOEcPltV3Z565FMOKRx6tYH_pFMS8k5Q4nMyOHvX85Q821vV3EjtoIAqkzVBVJb7D-I_u88yikZQL4Dy0_bw2s_Icfk8q1y_qpUj_hggAl6Kvo96Z5M7mPLAFillE" />
+                            <span class="text-base font-semibold">Continue with Google</span>
+                        </button>
+                    </div>
+                </form>
+                <div class="mt-12 text-center">
+                    <p class="text-slate-600 dark:text-slate-400 text-sm">
+                        Don't have an account?
+                        <a class="text-primary font-bold hover:underline ml-1" href="#">Create an account</a>
+                    </p>
+                </div>
+                <div class="lg:hidden mt-12 flex flex-col items-center gap-6 text-slate-400 text-center">
+                    <div
+                        class="flex flex-wrap justify-center items-center gap-6 text-xs uppercase tracking-widest font-semibold">
+                        <span class="flex items-center gap-1.5"><span
+                                class="material-symbols-outlined text-sm">security</span> 256-bit encryption</span>
+                        <span class="flex items-center gap-1.5"><span
+                                class="material-symbols-outlined text-sm">verified_user</span> PCI DSS Compliant</span>
+                    </div>
+                    <p class="text-xs">© 2024 Veritas Fintech Solutions. All rights reserved.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        let currentRole = 'company';
+
+        const roleButtons = document.querySelectorAll('#role-toggle button');
+        roleButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Reset all
+                roleButtons.forEach(b => {
+                    b.className = 'py-3 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all';
+                    b.classList.remove('active-role');
+                });
+                // Set active
+                const target = e.currentTarget;
+                target.className = 'py-3 text-sm font-bold rounded-lg bg-white dark:bg-slate-700 text-primary shadow-sm border border-slate-200 dark:border-slate-600 transition-all active-role';
+                currentRole = target.getAttribute('data-role');
+            });
+        });
+
+        function handleLogin(e) {
+            e.preventDefault(); // Prevent traditional form submission
+            if (currentRole === 'company') {
+                window.location.href = 'Dashboard.html';
+            } else {
+                window.location.href = 'cilent_dashboard.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

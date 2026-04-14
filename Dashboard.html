@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1955e6",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "slate-custom": {
+                            50: "#f8fafc",
+                            100: "#f1f5f9",
+                            200: "#e2e8f0",
+                            300: "#cbd5e1",
+                            400: "#94a3b8",
+                            500: "#64748b",
+                            600: "#475569",
+                            700: "#334155",
+                            800: "#1e293b",
+                            900: "#0f172a",
+                        }
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"],
+                        "sans": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2.25rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .font-display {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .donut-segment {
+            transition: stroke-dasharray 0.3s ease;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-custom-900 dark:text-slate-custom-100 min-h-screen flex">
+    <aside
+        class="w-72 bg-white dark:bg-slate-900 border-r border-slate-custom-200 dark:border-slate-custom-800 flex flex-col h-screen sticky top-0">
+        <div class="p-8 flex items-center gap-3">
+            <div
+                class="bg-primary size-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined">shield_with_heart</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold font-display tracking-tight text-primary">Veritas</h1>
+                <p class="text-[10px] uppercase tracking-widest text-slate-custom-400 font-bold">Executive Suite</p>
+            </div>
+        </div>
+        <nav class="flex-1 px-6 py-4 space-y-2">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary/5 text-primary font-bold transition-all"
+                href="Dashboard.html">
+                <span class="material-symbols-outlined">dashboard</span>
+                Executive Overview
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-custom-500 dark:text-slate-custom-400 hover:bg-slate-custom-50 dark:hover:bg-slate-custom-800 transition-colors"
+                href="Underwriting.html">
+                <span class="material-symbols-outlined">analytics</span>
+                Underwriting Hub
+            </a><a
+                class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-custom-500 dark:text-slate-custom-400 hover:bg-slate-custom-50 dark:hover:bg-slate-custom-800 transition-colors"
+                href="credit_risk.html">
+                <span class="material-symbols-outlined">bar_chart</span>
+                Risk Scoring
+            </a><a
+                class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-custom-500 dark:text-slate-custom-400 hover:bg-slate-custom-50 dark:hover:bg-slate-custom-800 transition-colors"
+                href="#">
+                <span class="material-symbols-outlined">play_circle</span>
+                Run Simulation
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-custom-500 dark:text-slate-custom-400 hover:bg-slate-custom-50 dark:hover:bg-slate-custom-800 transition-colors"
+                href="#">
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+                Portfolio Health
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-custom-500 dark:text-slate-custom-400 hover:bg-slate-custom-50 dark:hover:bg-slate-custom-800 transition-colors"
+                href="#">
+                <span class="material-symbols-outlined">assessment</span>
+                Board Reports
+            </a>
+        </nav>
+        <div class="p-6 border-t border-slate-custom-100 dark:border-slate-custom-800">
+            <div class="bg-slate-custom-50 dark:bg-slate-custom-800/50 rounded-2xl p-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="size-10 rounded-full border-2 border-white dark:border-slate-700 overflow-hidden">
+                        <img alt="Jane Doe" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3rDe7ejtWxSfDIz296uDLQ6bl9ZuUzDE42M1LVo-WvzAPyK8BrJnOLxdzuO1G1lmlKtad0J9pcs7bDdl3pmKlzp8qKrofoW-Wk-QS5g0jWYmGySDXWNBCGKKybVIZV6aD0gFWITLJ3Q7wKK7P8icoF2H4pc0nmCFFcrcQ90MQTl8mNCUoY7yrRG9mZtIAwE-it3BZZjaJB4hIQGxY1w96hsIHVQAARrqArn98zoBnX5yO_vixM_QL3BRslh0oLYPihvpN5U9yYRU" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold truncate">Jane Doe</p>
+                        <p class="text-[10px] text-slate-custom-400 font-medium uppercase">Senior Executive</p>
+                    </div>
+                </div>
+                <button
+                    class="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-colors">
+                    <span class="material-symbols-outlined text-sm">logout</span> Sign Out
+                </button>
+            </div>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header class="h-24 px-12 flex items-center justify-between">
+            <div>
+                <h2 class="text-3xl font-bold font-display text-slate-custom-900 dark:text-slate-custom-50">High-Level
+                    Executive Overview</h2>
+                <p class="text-slate-custom-400 text-sm mt-1">Real-time underwriting health indicators and application
+                    flow</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div
+                    class="bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border border-slate-custom-200 dark:border-slate-custom-800 flex items-center gap-3 text-sm font-medium">
+                    <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    System Healthy: 100%
+                </div>
+                <button
+                    class="bg-primary text-white px-6 py-2.5 rounded-2xl font-bold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all">
+                    Download Summary
+                </button>
+            </div>
+        </header>
+        <div class="px-12 pb-12 space-y-12 overflow-y-auto">
+            <section>
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="size-2 w-8 bg-primary rounded-full"></div>
+                        <h3 class="text-xl font-bold font-display">Underwriting Health</h3>
+                    </div>
+                    <div class="flex bg-slate-custom-100 dark:bg-slate-custom-800 p-1 rounded-xl">
+                        <button
+                            class="px-4 py-1.5 text-xs font-bold bg-white dark:bg-slate-700 shadow-sm rounded-lg">Real-time</button>
+                        <button class="px-4 py-1.5 text-xs font-bold text-slate-custom-500">Historical</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div
+                        class="lg:col-span-2 bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 flex flex-col md:flex-row items-center gap-12">
+                        <div class="relative size-56">
+                            <svg class="size-full -rotate-90" viewbox="0 0 36 36">
+                                <circle class="stroke-slate-100 dark:stroke-slate-800" cx="18" cy="18" fill="none"
+                                    r="16" stroke-width="3.5"></circle>
+                                <circle class="stroke-emerald-500" cx="18" cy="18" fill="none" r="16"
+                                    stroke-dasharray="72, 100" stroke-linecap="round" stroke-width="3.5"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="text-4xl font-bold font-display">72%</span>
+                                <span
+                                    class="text-[10px] font-bold text-slate-custom-400 uppercase tracking-widest">Approval</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 space-y-6">
+                            <div>
+                                <h4 class="text-2xl font-bold font-display mb-1">Approval vs Rejection</h4>
+                                <p class="text-sm text-slate-custom-500">Decision trends across all active loan
+                                    portfolios</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div
+                                    class="p-4 rounded-3xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30">
+                                    <p class="text-[10px] font-bold text-emerald-600 uppercase mb-1">Approvals</p>
+                                    <p class="text-xl font-bold">1,402</p>
+                                </div>
+                                <div
+                                    class="p-4 rounded-3xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30">
+                                    <p class="text-[10px] font-bold text-red-600 uppercase mb-1">Rejections</p>
+                                    <p class="text-xl font-bold">545</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-emerald-600 font-bold">
+                                <span class="material-symbols-outlined text-lg">trending_up</span>
+                                <span>Approval rate increased by 4.2% since yesterday</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="p-3 bg-primary/10 text-primary rounded-2xl">
+                                    <span class="material-symbols-outlined text-3xl">pending_actions</span>
+                                </div>
+                                <span
+                                    class="px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 text-[10px] font-bold uppercase">High
+                                    Volume</span>
+                            </div>
+                            <p class="text-slate-custom-500 font-bold text-sm uppercase tracking-wider">Pending Queue
+                                Size</p>
+                            <h3 class="text-6xl font-bold font-display mt-2">142</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="w-full">
+                                <div class="flex justify-between text-xs font-bold mb-2">
+                                    <span class="text-slate-custom-400">Current Load Capacity</span>
+                                    <span class="text-primary">82%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden p-1">
+                                    <div class="bg-primary h-full rounded-full w-[82%]"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-custom-400 leading-relaxed italic">
+                                Queue is processing within normal executive thresholds.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div
+                    class="bg-white dark:bg-slate-900 px-8 py-6 rounded-3xl border border-slate-custom-200 dark:border-slate-custom-800 flex items-center justify-between">
+                    <div class="flex items-center gap-5">
+                        <div
+                            class="size-14 rounded-2xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl">timer</span>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-custom-400 uppercase tracking-widest">Avg. Turnaround
+                            </p>
+                            <p class="text-2xl font-bold font-display">4.2 <span
+                                    class="text-sm font-sans font-medium text-slate-custom-500">Days</span></p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-emerald-600 text-xs font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">trending_down</span> 12%
+                        </span>
+                        <p class="text-[10px] text-slate-custom-400">vs last week</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-900 px-8 py-6 rounded-3xl border border-slate-custom-200 dark:border-slate-custom-800 flex items-center justify-between">
+                    <div class="flex items-center gap-5">
+                        <div
+                            class="size-14 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl">speed</span>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-custom-400 uppercase tracking-widest">Productivity
+                            </p>
+                            <p class="text-2xl font-bold font-display">8.5 <span
+                                    class="text-sm font-sans font-medium text-slate-custom-500">Apps/Day</span></p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-emerald-600 text-xs font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">trending_up</span> 5%
+                        </span>
+                        <p class="text-[10px] text-slate-custom-400">vs last month</p>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="size-2 w-8 bg-red-500 rounded-full"></div>
+                        <h3 class="text-xl font-bold font-display">Critical Applications</h3>
+                    </div>
+                    <button class="text-sm font-bold text-primary flex items-center gap-2 group">
+                        Full Underwriting Queue
+                        <span
+                            class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-custom-200 dark:border-slate-custom-800 flex items-center justify-between hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all">
+                        <div class="flex items-center gap-6 w-1/3">
+                            <div
+                                class="size-12 rounded-full bg-slate-custom-100 dark:bg-slate-800 flex items-center justify-center text-sm font-bold border-2 border-white dark:border-slate-700 shadow-sm">
+                                RB</div>
+                            <div>
+                                <p class="font-bold text-lg">Robert Brown</p>
+                                <p class="text-xs text-slate-custom-400">ID: #LN-9001 • Corporate Loan</p>
+                            </div>
+                        </div>
+                        <div class="w-1/4">
+                            <p class="text-[10px] font-bold text-slate-custom-400 uppercase mb-1">Amount</p>
+                            <p class="text-xl font-bold">₹50,000</p>
+                        </div>
+                        <div class="w-1/4">
+                            <span
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold bg-amber-50 dark:bg-amber-900/20 text-amber-600">
+                                <span class="size-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                Longest Pending: 8 Days
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="px-5 py-2 text-xs font-bold border border-slate-custom-200 dark:border-slate-custom-700 rounded-xl hover:bg-slate-custom-50 dark:hover:bg-slate-800 transition-colors">Details</button>
+                            <button
+                                class="px-5 py-2 text-xs font-bold bg-primary text-white rounded-xl hover:opacity-90 transition-opacity">Expedite</button>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-custom-200 dark:border-slate-custom-800 flex items-center justify-between hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all">
+                        <div class="flex items-center gap-6 w-1/3">
+                            <div
+                                class="size-12 rounded-full bg-slate-custom-100 dark:bg-slate-800 flex items-center justify-center text-sm font-bold border-2 border-white dark:border-slate-700 shadow-sm">
+                                SM</div>
+                            <div>
+                                <p class="font-bold text-lg">Sarah Miller</p>
+                                <p class="text-xs text-slate-custom-400">ID: #LN-8120 • SMB Credit Line</p>
+                            </div>
+                        </div>
+                        <div class="w-1/4">
+                            <p class="text-[10px] font-bold text-slate-custom-400 uppercase mb-1">Amount</p>
+                            <p class="text-xl font-bold">₹12,500</p>
+                        </div>
+                        <div class="w-1/4">
+                            <span
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold bg-red-50 dark:bg-red-900/20 text-red-600">
+                                <span class="size-2 rounded-full bg-red-500"></span>
+                                High Risk Flag
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="px-5 py-2 text-xs font-bold border border-slate-custom-200 dark:border-slate-custom-700 rounded-xl hover:bg-slate-custom-50 dark:hover:bg-slate-800 transition-colors">Details</button>
+                            <button
+                                class="px-5 py-2 text-xs font-bold bg-primary text-white rounded-xl hover:opacity-90 transition-opacity">Review</button>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-custom-200 dark:border-slate-custom-800 flex items-center justify-between hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all">
+                        <div class="flex items-center gap-6 w-1/3">
+                            <div
+                                class="size-12 rounded-full bg-slate-custom-100 dark:bg-slate-800 flex items-center justify-center text-sm font-bold border-2 border-white dark:border-slate-700 shadow-sm">
+                                JD</div>
+                            <div>
+                                <p class="font-bold text-lg">John Doe</p>
+                                <p class="text-xs text-slate-custom-400">ID: #LN-7742 • Personal Loan</p>
+                            </div>
+                        </div>
+                        <div class="w-1/4">
+                            <p class="text-[10px] font-bold text-slate-custom-400 uppercase mb-1">Amount</p>
+                            <p class="text-xl font-bold">₹25,000</p>
+                        </div>
+                        <div class="w-1/4">
+                            <span
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600">
+                                <span class="size-2 rounded-full bg-blue-500"></span>
+                                Verification Pending
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="px-5 py-2 text-xs font-bold border border-slate-custom-200 dark:border-slate-custom-700 rounded-xl hover:bg-slate-custom-50 dark:hover:bg-slate-800 transition-colors">Details</button>
+                            <button
+                                class="px-5 py-2 text-xs font-bold bg-primary text-white rounded-xl hover:opacity-90 transition-opacity">Assign</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
+
+</html>
