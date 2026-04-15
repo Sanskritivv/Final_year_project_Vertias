@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Biometric Verification - Veritas</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1955e6",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a"
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"],
+                        "sans": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2.25rem", "xl": "3rem", "full": "9999px" }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .scanner-line {
+            height: 2px;
+            background: #1955e6;
+            box-shadow: 0 0 15px #1955e6, 0 0 30px #1955e6;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            animation: scan 3s ease-in-out infinite;
+        }
+        @keyframes scan {
+            0%, 100% { top: 0%; }
+            50% { top: 100%; }
+        }
+        .iris-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(25, 85, 230, 0.4)); }
+            50% { filter: drop-shadow(0 0 20px rgba(25, 85, 230, 0.8)); }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col">
+
+    <!-- Minimal header -->
+    <header class="flex items-center justify-between px-8 py-5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-3 text-primary">
+            <div class="size-9 flex items-center justify-center bg-primary/10 rounded-xl">
+                <svg class="size-5 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+                </svg>
+            </div>
+            <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white">Veritas</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-slate-400 font-semibold uppercase tracking-widest">
+            <span class="material-symbols-outlined text-sm text-emerald-500">lock</span>
+            Secure Session
+        </div>
+    </header>
+
+    <!-- Step progress indicator -->
+    <div class="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4">
+        <div class="max-w-2xl mx-auto flex items-center justify-center gap-0">
+            <!-- Step 1: Documents (done) -->
+            <div class="flex flex-col items-center gap-1.5">
+                <div class="flex items-center justify-center size-9 rounded-full bg-emerald-500 text-white">
+                    <span class="material-symbols-outlined text-sm">check</span>
+                </div>
+                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Documents</p>
+            </div>
+            <div class="h-px bg-primary w-16 sm:w-24 mb-4"></div>
+            <!-- Step 2: Iris (active) -->
+            <div class="flex flex-col items-center gap-1.5">
+                <div class="flex items-center justify-center size-9 rounded-full bg-primary text-white ring-4 ring-primary/20">
+                    <span class="material-symbols-outlined text-sm">visibility</span>
+                </div>
+                <p class="text-[10px] font-bold text-primary uppercase tracking-wide">Iris Scan</p>
+            </div>
+            <div class="h-px bg-slate-200 dark:bg-slate-700 w-16 sm:w-24 mb-4"></div>
+            <!-- Step 3: Final Review (pending) -->
+            <div class="flex flex-col items-center gap-1.5 opacity-40">
+                <div class="flex items-center justify-center size-9 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500">
+                    <span class="material-symbols-outlined text-sm">fact_check</span>
+                </div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Final Review</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <main class="flex-1 flex items-center justify-center p-8">
+        <div class="w-full max-w-xl text-center">
+
+            <div class="mb-10">
+                <div class="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-5">
+                    <span class="material-symbols-outlined text-sm">security</span>
+                    Identity Verification — Step 2 of 3
+                </div>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-3 tracking-tight">Iris Recognition</h1>
+                <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto text-sm leading-relaxed">
+                    We need to verify your identity before processing your application. This takes less than 10 seconds.
+                </p>
+            </div>
+
+            <!-- Scanner UI -->
+            <div class="relative group cursor-pointer" onclick="startScan()">
+                <div class="absolute -inset-4 bg-primary/20 rounded-[4rem] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="relative aspect-square max-w-[340px] mx-auto bg-slate-900 border-2 border-slate-800 rounded-[3.5rem] p-10 overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]">
+                    <!-- Corner brackets -->
+                    <div class="absolute top-7 left-7 size-10 border-t-4 border-l-4 border-primary rounded-tl-2xl"></div>
+                    <div class="absolute top-7 right-7 size-10 border-t-4 border-r-4 border-primary rounded-tr-2xl"></div>
+                    <div class="absolute bottom-7 left-7 size-10 border-b-4 border-l-4 border-primary rounded-bl-2xl"></div>
+                    <div class="absolute bottom-7 right-7 size-10 border-b-4 border-r-4 border-primary rounded-br-2xl"></div>
+
+                    <div id="scanner-visual" class="relative size-full flex items-center justify-center opacity-40 transition-opacity duration-500">
+                        <span class="material-symbols-outlined text-[160px] text-primary iris-glow">remove_red_eye</span>
+                        <div id="scan-line" class="scanner-line hidden"></div>
+                    </div>
+
+                    <!-- Status overlay -->
+                    <div id="scan-status" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+                        <div id="progress-container" class="w-44 h-1 bg-slate-700 rounded-full mb-4 overflow-hidden">
+                            <div id="progress-bar" class="h-full bg-primary w-0 transition-all duration-300 rounded-full"></div>
+                        </div>
+                        <p id="status-text" class="text-xs font-bold font-mono tracking-widest text-primary">INITIALIZING...</p>
+                    </div>
+                </div>
+
+                <p id="instruction" class="mt-7 text-sm font-bold text-primary animate-pulse uppercase tracking-[0.2em]">
+                    Tap to begin scan
+                </p>
+            </div>
+
+            <!-- Info strip -->
+            <div class="mt-12 grid grid-cols-3 gap-4">
+                <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Engine</p>
+                    <p class="text-xs font-mono text-slate-700 dark:text-slate-300">v4.8.2-Neural</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Trust Score</p>
+                    <p class="text-xs font-mono text-emerald-500">99.98%</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Latency</p>
+                    <p class="text-xs font-mono text-slate-700 dark:text-slate-300">4.2ms</p>
+                </div>
+            </div>
+
+            <p class="mt-8 text-xs text-slate-400">
+                <span class="material-symbols-outlined text-xs align-middle">info</span>
+                Your biometric data is processed locally and never stored.
+            </p>
+        </div>
+    </main>
+
+    <script>
+        let scanning = false;
+
+        function startScan() {
+            if (scanning) return;
+            scanning = true;
+
+            const scanLine = document.getElementById('scan-line');
+            const scannerVisual = document.getElementById('scanner-visual');
+            const scanStatus = document.getElementById('scan-status');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const instruction = document.getElementById('instruction');
+
+            scanLine.classList.remove('hidden');
+            scannerVisual.classList.remove('opacity-40');
+            scannerVisual.classList.add('opacity-100');
+            scanStatus.classList.add('opacity-100');
+            instruction.classList.add('invisible');
+
+            let progress = 0;
+            const statuses = ['MAPPING RETINA...', 'CHECKING TEXTURE...', 'ALGORITHMIC MATCHING...', 'VERIFYING IDENTITY...'];
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    completeScan();
+                }
+                progressBar.style.width = progress + '%';
+                statusText.innerText = statuses[Math.min(Math.floor(progress / 25), statuses.length - 1)];
+            }, 300);
+
+            async function completeScan() {
+                statusText.innerText = 'VERIFICATION COMPLETE';
+                statusText.classList.remove('text-primary');
+                statusText.classList.add('text-emerald-400');
+                progressBar.classList.remove('bg-primary');
+                progressBar.classList.add('bg-emerald-500');
+
+                try {
+                    await fetch('/api/client/iris/verify', { method: 'POST' });
+                } catch (err) {
+                    console.error('Failed to persist iris verification state', err);
+                }
+
+                setTimeout(() => { window.location.href = '/client_dashboard'; }, 1500);
+            }
+        }
+    </script>
+</body>
+</html>

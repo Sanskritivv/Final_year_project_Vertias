@@ -1,0 +1,142 @@
+{% extends "company_base.html" %}
+
+{% set active_nav = "dashboard" %}
+
+{% block title %}Executive Overview - Veritas{% endblock %}
+
+{% block head %}
+  <style>
+    .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.8); }
+    .dark .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.8); }
+  </style>
+{% endblock %}
+
+{% block header %}
+  <div>
+    <h2 class="text-2xl font-bold font-display text-slate-custom-900 dark:text-slate-custom-50">High-Level Executive Overview</h2>
+    <p class="text-slate-custom-400 text-sm">Portfolio health and underwriting real-time analytics.</p>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="bg-slate-custom-50 dark:bg-slate-custom-800 px-4 py-2 rounded-2xl flex items-center gap-3 text-sm font-medium">
+      <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      Live Engine Active
+    </div>
+    <button type="button" class="bg-primary text-white px-6 py-2.5 rounded-2xl font-bold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all" onclick="alert('Demo: export not implemented yet.');">
+      Download Summary
+    </button>
+  </div>
+{% endblock %}
+
+{% block content %}
+            <!-- Stats Grid -->
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Total Volume -->
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 shadow-sm transition-all hover:shadow-xl">
+                    <div class="size-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
+                        <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+                    </div>
+                    <p class="text-slate-custom-400 font-bold text-[10px] uppercase tracking-widest mb-1">Total Loan Volume</p>
+                    <h3 class="text-3xl font-bold font-display">₹{{ "{:,.2f}".format(metrics.total_volume/10000000) }} Cr</h3>
+                    <div class="mt-4 flex items-center gap-2 text-emerald-600 text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm">trending_up</span> 14.5% vs last month
+                    </div>
+                </div>
+
+                <!-- Approval Rate -->
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 shadow-sm transition-all hover:shadow-xl">
+                    <div class="size-14 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-6">
+                        <span class="material-symbols-outlined text-2xl">verified_user</span>
+                    </div>
+                    <p class="text-slate-custom-400 font-bold text-[10px] uppercase tracking-widest mb-1">Portfolio Approval Rate</p>
+                    <h3 class="text-3xl font-bold font-display">{{ "%.1f"|format(metrics.approval_rate) }}%</h3>
+                    <div class="mt-4 flex items-center gap-2 text-emerald-600 text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm">trending_up</span> 2.3% improvement
+                    </div>
+                </div>
+
+                <!-- Pending Batch -->
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 shadow-sm transition-all hover:shadow-xl">
+                    <div class="size-14 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-6">
+                        <span class="material-symbols-outlined text-2xl">pending_actions</span>
+                    </div>
+                    <p class="text-slate-custom-400 font-bold text-[10px] uppercase tracking-widest mb-1">Current Pending Batch</p>
+                    <h3 class="text-3xl font-bold font-display">{{ metrics.pending_count }}</h3>
+                    <div class="mt-4 flex items-center gap-2 text-slate-custom-400 text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm">schedule</span> In processing queue
+                    </div>
+                </div>
+
+                <!-- Total Applications -->
+                <div class="bg-primary p-8 rounded-[2.5rem] shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]">
+                    <div class="size-14 rounded-2xl bg-white/10 text-white flex items-center justify-center mb-6">
+                        <span class="material-symbols-outlined text-2xl">analytics</span>
+                    </div>
+                    <p class="text-white/70 font-bold text-[10px] uppercase tracking-widest mb-1">Total Loan Enquiries</p>
+                    <h3 class="text-3xl font-bold font-display text-white">{{ metrics.total_applications }}</h3>
+                    <div class="mt-4 flex items-center gap-2 text-white/90 text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm">hub</span> Live Application Feed
+                    </div>
+                </div>
+            </section>
+
+            <!-- Secondary Analytics -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-custom-200 dark:border-slate-custom-800">
+                    <h3 class="text-xl font-bold font-display mb-8">Portfolio Risk Tiering</h3>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold font-mono">
+                                <span class="text-emerald-500 uppercase tracking-widest">Low Risk (Tier 1)</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-[65%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold font-mono">
+                                <span class="text-amber-500 uppercase tracking-widest">Medium Risk (Tier 2)</span>
+                                <span>25%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-amber-500 h-full w-[25%] rounded-full opacity-80"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold font-mono">
+                                <span class="text-red-500 uppercase tracking-widest">High Risk (Tier 3)</span>
+                                <span>10%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-red-500 h-full w-[10%] rounded-full opacity-60"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-8 text-xs text-slate-custom-400 italic">Historical data shows a 1.2% decrease in High Risk exposures over 90 days.</p>
+                </div>
+
+                <div class="bg-slate-custom-900 p-10 rounded-[3rem] text-white flex flex-col justify-between relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-12 opacity-5 scale-150 group-hover:rotate-12 transition-transform duration-700">
+                        <span class="material-symbols-outlined text-[120px]">insights</span>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-bold font-display mb-2">Automated Underwriting</h3>
+                        <p class="text-slate-400 text-sm max-w-sm mb-8">92% of your portfolio is currently analyzed by the Veritas AI Risk Engine without manual intervention.</p>
+                        <div class="flex items-center gap-12">
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-primary tracking-widest mb-1">Avg Accuracy</p>
+                                <p class="text-3xl font-bold">98.4%</p>
+                            </div>
+                            <div class="w-px h-12 bg-white/10"></div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-primary tracking-widest mb-1">Latency</p>
+                                <p class="text-3xl font-bold">120ms</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="relative z-10 w-full mt-10 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all">
+                        View Training Metrics
+                    </button>
+                </div>
+            </section>
+{% endblock %}

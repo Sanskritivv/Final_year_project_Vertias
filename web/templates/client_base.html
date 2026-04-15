@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>{% block title %}Veritas Client Portal{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Domine:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1955e6",
+            "background-light": "#f6f6f8",
+            "background-dark": "#111621"
+          },
+          fontFamily: {
+            sans: ["Be Vietnam Pro", "sans-serif"],
+            display: ["Domine", "serif"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-slate-100">
+  <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 py-4 lg:px-10 sticky top-0 z-50">
+    <div class="flex items-center gap-3 text-primary">
+      <span class="material-symbols-outlined">shield_with_heart</span>
+      <h2 class="text-slate-900 dark:text-white text-xl font-extrabold tracking-tight font-display">Veritas Client Portal</h2>
+    </div>
+    <div class="flex items-center gap-4">
+      <p class="text-sm text-slate-500 hidden sm:block">Welcome, {{ session.get('username', 'client') }}</p>
+      <a href="/logout" class="px-4 py-2 rounded-full text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">Sign Out</a>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-6 lg:px-10 pt-6">
+    <nav class="flex flex-wrap gap-2">
+      <a href="/client_dashboard" class="px-4 py-2 rounded-full text-sm font-bold {% if active_client_nav == 'dashboard' %}bg-primary text-white{% else %}bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300{% endif %}">Dashboard</a>
+      <a href="/client_documents" class="px-4 py-2 rounded-full text-sm font-bold {% if active_client_nav == 'documents' %}bg-primary text-white{% else %}bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300{% endif %}">Documents</a>
+      <a href="/client_iris" class="px-4 py-2 rounded-full text-sm font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">Iris Verification</a>
+      <a href="/client_support" class="px-4 py-2 rounded-full text-sm font-bold {% if active_client_nav == 'support' %}bg-primary text-white{% else %}bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300{% endif %}">Support</a>
+    </nav>
+  </div>
+
+  <main class="max-w-6xl mx-auto p-6 lg:p-10 space-y-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,148 @@
+{% extends "company_base.html" %}
+
+{% set active_nav = "reports" %}
+
+{% block title %}Market Reports - Veritas{% endblock %}
+
+{% block header %}
+  <div>
+    <h2 class="text-2xl font-bold font-display text-slate-custom-900 dark:text-slate-custom-50">Board & Market Reports</h2>
+    <p class="text-slate-custom-400 text-sm">Automated regulatory and performance documentation.</p>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="relative">
+      <input id="report-search" class="w-72 bg-slate-custom-50 dark:bg-slate-custom-800 border border-slate-custom-200 dark:border-slate-custom-700 rounded-2xl py-2.5 px-4 text-sm focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Search applications / customers…" />
+    </div>
+    <button type="button" class="bg-primary text-white px-6 py-2.5 rounded-2xl font-bold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all" onclick="refreshReportTable()">
+      Refresh
+    </button>
+  </div>
+{% endblock %}
+
+{% block content %}
+            <!-- Report Actions -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for title, desc, icon in [
+                    ('Quarterly Audit', 'Comprehensive financial review for Q1 2026.', 'history_edu'),
+                    ('Risk Exposure', 'Current risk concentration and mitigation strategy.', 'security_update_good'),
+                    ('Yield Projection', 'Forward-looking interest and default forecasts.', 'query_stats')
+                ] %}
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-custom-200 dark:border-slate-custom-800 group hover:border-primary/40 transition-all">
+                    <div class="size-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                        <span class="material-symbols-outlined">{{ icon }}</span>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">{{ title }}</h4>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-6">{{ desc }}</p>
+                    <button type="button" class="w-full py-3 bg-slate-50 dark:bg-slate-800 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-primary hover:text-white transition-all" onclick="alert('Demo: PDF generation not implemented yet.');">Download PDF</button>
+                </div>
+                {% endfor %}
+            </section>
+
+            <!-- Recent Generated Reports Table -->
+            <section class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 overflow-hidden">
+                 <div class="p-8 border-b border-slate-custom-100 dark:border-slate-custom-800 flex justify-between items-center">
+                     <h3 class="text-xl font-bold font-display">Recent Generations</h3>
+                     <span id="reports-count" class="text-xs font-bold text-primary px-3 py-1 bg-primary/10 rounded-full">—</span>
+                 </div>
+                 <div class="overflow-x-auto">
+                     <table class="w-full text-left">
+                         <thead>
+                             <tr class="bg-slate-50 dark:bg-slate-800/50">
+                                 <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Report Name</th>
+                                 <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Generated On</th>
+                                 <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                                 <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Size</th>
+                                 <th class="px-8 py-4"></th>
+                             </tr>
+                         </thead>
+                         <tbody id="reports-table" class="divide-y divide-slate-100 dark:divide-slate-800">
+                           <tr>
+                             <td class="px-8 py-6 text-sm text-slate-500" colspan="5">Loading…</td>
+                           </tr>
+                         </tbody>
+                     </table>
+                 </div>
+            </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function formatDate(d) {
+      try {
+        return new Date(d).toLocaleString("en-IN", { year: "numeric", month: "short", day: "2-digit" });
+      } catch {
+        return "—";
+      }
+    }
+
+    function formatINR(n) {
+      const num = Number(n);
+      if (!Number.isFinite(num)) return "₹—";
+      return "₹" + num.toLocaleString("en-IN");
+    }
+
+    function downloadJson(name, data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function refreshReportTable() {
+      const tbody = document.getElementById("reports-table");
+      const q = (document.getElementById("report-search").value || "").toLowerCase().trim();
+      tbody.innerHTML = "";
+
+      try {
+        const res = await fetch("/api/applications");
+        const apps = await res.json();
+        const filtered = apps.filter(a => {
+          const hay = `${a.application_id} ${a.customer_name} ${a.status} ${a.priority}`.toLowerCase();
+          return !q || hay.includes(q);
+        });
+
+        document.getElementById("reports-count").innerText = `${filtered.length} Applications`;
+
+        if (!filtered.length) {
+          tbody.innerHTML = `<tr><td class="px-8 py-6 text-sm text-slate-500" colspan="5">No matching records.</td></tr>`;
+          return;
+        }
+
+        filtered.slice(0, 15).forEach((a) => {
+          const row = document.createElement("tr");
+          row.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors";
+          row.innerHTML = `
+            <td class="px-8 py-5">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">description</span>
+                <span class="font-bold text-sm">Application_${a.application_id}.json</span>
+              </div>
+            </td>
+            <td class="px-8 py-5 text-sm text-slate-500">${formatDate(Date.now())}</td>
+            <td class="px-8 py-5"><span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase">Stored</span></td>
+            <td class="px-8 py-5 text-sm font-mono text-slate-400">${formatINR(a.loan_amount)}</td>
+            <td class="px-8 py-5 text-right">
+              <button type="button" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-primary" title="Download JSON">
+                <span class="material-symbols-outlined text-lg">download</span>
+              </button>
+            </td>
+          `;
+          row.querySelector("button").addEventListener("click", () => downloadJson(`application_${a.application_id}.json`, a));
+          tbody.appendChild(row);
+        });
+      } catch (e) {
+        console.error(e);
+        document.getElementById("reports-count").innerText = "Failed to load";
+        tbody.innerHTML = `<tr><td class="px-8 py-6 text-sm text-red-500" colspan="5">Failed to load applications.</td></tr>`;
+      }
+    }
+
+    document.getElementById("report-search").addEventListener("input", () => refreshReportTable());
+    refreshReportTable();
+  </script>
+{% endblock %}

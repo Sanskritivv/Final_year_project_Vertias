@@ -1,0 +1,94 @@
+{% extends "client_base.html" %}
+{% set active_client_nav = "dashboard" %}
+{% block title %}Client Dashboard - Veritas{% endblock %}
+
+{% block content %}
+  <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8">
+    <h1 class="text-2xl font-display font-bold">Application Overview</h1>
+    <p class="text-slate-500 text-sm mt-2">
+      Application ID: #{{ client_app.application_id }} • Estimated loan: ₹ {{ "{:,.0f}".format(client_app.estimated_loan or 0) }} • Status: {{ client_app.status }}
+    </p>
+  </section>
+
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="p-5 rounded-xl border {% if client_app.doc_step_complete %}border-emerald-300 bg-emerald-50/70 dark:bg-emerald-900/10{% else %}border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900{% endif %}">
+      <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Step 1</p>
+      <p class="font-bold mt-1">Documents</p>
+      <p class="text-sm mt-1 {% if client_app.doc_step_complete %}text-emerald-600 font-semibold{% else %}text-slate-500{% endif %}">
+        {% if client_app.doc_step_complete %}Complete{% else %}Pending uploads{% endif %}
+      </p>
+      <a href="/client_documents" class="inline-flex mt-3 text-xs font-bold text-primary">Go to Documents</a>
+    </div>
+    <div class="p-5 rounded-xl border {% if client_app.iris_verified %}border-emerald-300 bg-emerald-50/70 dark:bg-emerald-900/10{% else %}border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900{% endif %}">
+      <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Step 2</p>
+      <p class="font-bold mt-1">Iris Verification</p>
+      <p class="text-sm mt-1 {% if client_app.iris_verified %}text-emerald-600 font-semibold{% else %}text-slate-500{% endif %}">
+        {% if client_app.iris_verified %}Verified{% else %}Not verified{% endif %}
+      </p>
+      <a href="/client_iris" class="inline-flex mt-3 text-xs font-bold text-primary">Start Iris Scan</a>
+    </div>
+    <div class="p-5 rounded-xl border {% if client_app.final_review_ready %}border-emerald-300 bg-emerald-50/70 dark:bg-emerald-900/10{% else %}border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900{% endif %}">
+      <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Step 3</p>
+      <p class="font-bold mt-1">Final Review</p>
+      <p class="text-sm mt-1 {% if client_app.final_review_ready %}text-emerald-600 font-semibold{% else %}text-slate-500{% endif %}">
+        {% if client_app.final_review_ready %}Ready for review{% else %}Waiting for step completion{% endif %}
+      </p>
+      <a href="/client_support" class="inline-flex mt-3 text-xs font-bold text-primary">Need help?</a>
+    </div>
+  </section>
+
+  <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-bold text-lg">Document Status</h2>
+      <button id="digilocker-btn" type="button" class="px-5 py-2.5 rounded-full font-bold bg-primary text-white shadow-lg shadow-primary/20">Connect DigiLocker</button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {% for key, doc in client_app.documents.items() %}
+      <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <div>
+          <p class="font-semibold">{{ doc.label }}</p>
+          <p class="text-xs text-slate-500 mt-1">{{ doc.filename or "No file uploaded yet" }}</p>
+        </div>
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {% if doc.status == 'uploaded' %}bg-emerald-100 text-emerald-700{% else %}bg-slate-100 text-slate-600{% endif %}">
+          {{ doc.status.replace('_', ' ') }}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="client-alert" class="hidden rounded-xl p-4 text-sm font-medium"></section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function showAlert(message, type = "info") {
+    const el = document.getElementById("client-alert");
+    const classes = {
+      success: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+      error: "bg-red-50 text-red-700 border border-red-200",
+      info: "bg-primary/10 text-primary border border-primary/20"
+    };
+    el.className = `${classes[type] || classes.info} rounded-xl p-4 text-sm font-medium`;
+    el.innerText = message;
+    el.classList.remove("hidden");
+    setTimeout(() => el.classList.add("hidden"), 3000);
+  }
+
+  document.getElementById("digilocker-btn").addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/client/digilocker", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        showAlert(data.error || "DigiLocker sync failed.", "error");
+        return;
+      }
+      showAlert("Documents fetched through DigiLocker simulation. Refreshing...", "success");
+      setTimeout(() => window.location.reload(), 800);
+    } catch (err) {
+      console.error(err);
+      showAlert("DigiLocker request failed.", "error");
+    }
+  });
+</script>
+{% endblock %}

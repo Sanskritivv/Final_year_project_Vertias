@@ -1,0 +1,154 @@
+{% extends "company_base.html" %}
+
+{% set active_nav = "analytics" %}
+
+{% block title %}Analytics Hub - Veritas{% endblock %}
+
+{% block header %}
+  <div>
+    <h2 class="text-2xl font-bold font-display text-slate-custom-900 dark:text-slate-custom-50">Deep-Dive Analytics</h2>
+    <p class="text-slate-custom-400 text-sm">Quantifying portfolio risk and performance trends.</p>
+  </div>
+  <div class="flex items-center gap-4">
+    <button type="button" class="bg-primary text-white px-6 py-2.5 rounded-2xl font-bold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all" onclick="refreshAnalytics()">
+      Refresh Metrics
+    </button>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <!-- Live Summary (from /api/analytics) -->
+  <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-[1.75rem] border border-slate-custom-200 dark:border-slate-custom-800">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-custom-400">Total Volume</p>
+      <p id="metric-total-volume" class="text-2xl font-bold mt-2">₹—</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-[1.75rem] border border-slate-custom-200 dark:border-slate-custom-800">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-custom-400">Approval Rate</p>
+      <p id="metric-approval-rate" class="text-2xl font-bold mt-2">—%</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-[1.75rem] border border-slate-custom-200 dark:border-slate-custom-800">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-custom-400">Pending Count</p>
+      <p id="metric-pending-count" class="text-2xl font-bold mt-2">—</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-[1.75rem] border border-slate-custom-200 dark:border-slate-custom-800">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-custom-400">Total Applications</p>
+      <p id="metric-total-applications" class="text-2xl font-bold mt-2">—</p>
+    </div>
+  </section>
+
+            <!-- Analytics Summary -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800">
+                    <h3 class="text-xl font-bold mb-6">Volume Growth Trend</h3>
+                    <div class="h-80 w-full flex items-end gap-2 px-4">
+                        {% for i in range(12) %}
+                        {% set h = [40, 55, 45, 70, 65, 85, 80, 95, 90, 100, 110, 120][i] %}
+                        <div class="flex-1 group relative">
+                            <div class="bg-primary/20 group-hover:bg-primary/40 transition-colors w-full rounded-t-xl" style="height: {{ h * 2 }}px;"></div>
+                            <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">₹{{ h }}M</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="flex justify-between mt-4 text-[10px] font-bold text-slate-custom-400 uppercase tracking-widest px-2">
+                        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                    </div>
+                </div>
+                <div class="bg-primary p-10 rounded-[2.5rem] text-white flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold font-display mb-2">Alpha Performance</h3>
+                        <p class="text-white/60 text-sm">Portfolio yield exceeding market benchmark by 4.2%.</p>
+                    </div>
+                    <div>
+                        <div class="text-5xl font-black mb-4">18.4%</div>
+                        <p class="text-xs font-bold uppercase tracking-widest opacity-60">Weighted Avg Yield</p>
+                    </div>
+                    <button class="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl font-bold transition-all">View Breakdown</button>
+                </div>
+            </section>
+
+            <!-- Distribution Section -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800">
+                    <h3 class="text-xl font-bold mb-8">Risk Grade Distribution</h3>
+                    <div class="space-y-6">
+                        {% for grade, count, color in [('Grade A', 42, 'emerald'), ('Grade B', 35, 'blue'), ('Grade C', 15, 'amber'), ('Grade D', 8, 'red')] %}
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-custom-400">{{ grade }}</span>
+                                <span>{{ count }}%</span>
+                            </div>
+                            <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-{{ color }}-500" style="width: {{ count }}%;"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800">
+                     <h3 class="text-xl font-bold mb-8">Asset Allocation</h3>
+                     <div class="flex items-center gap-12">
+                         <div class="relative size-40">
+                             <svg class="size-full -rotate-90" viewBox="0 0 36 36">
+                                 <circle class="stroke-slate-100 dark:stroke-slate-800" cx="18" cy="18" fill="none" r="16" stroke-width="4"></circle>
+                                 <circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="70, 100" stroke-width="4" stroke-linecap="round"></circle>
+                             </svg>
+                             <div class="absolute inset-0 flex items-center justify-center flex-col">
+                                 <span class="text-2xl font-bold">70%</span>
+                                 <span class="text-[8px] text-slate-400 uppercase font-black">Secured</span>
+                             </div>
+                         </div>
+                         <div class="flex-1 space-y-3">
+                             <div class="flex items-center gap-3">
+                                 <div class="size-3 rounded-full bg-primary"></div>
+                                 <div class="flex-1 flex justify-between text-xs font-bold">
+                                     <span class="text-slate-400">Mortgages</span>
+                                     <span>70%</span>
+                                 </div>
+                             </div>
+                             <div class="flex items-center gap-3">
+                                 <div class="size-3 rounded-full bg-blue-400"></div>
+                                 <div class="flex-1 flex justify-between text-xs font-bold">
+                                     <span class="text-slate-400">Auto Loans</span>
+                                     <span>20%</span>
+                                 </div>
+                             </div>
+                             <div class="flex items-center gap-3">
+                                 <div class="size-3 rounded-full bg-slate-300"></div>
+                                 <div class="flex-1 flex justify-between text-xs font-bold">
+                                     <span class="text-slate-400">Others</span>
+                                     <span>10%</span>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+            </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function formatINR(n) {
+      const num = Number(n);
+      if (!Number.isFinite(num)) return "₹—";
+      return "₹" + num.toLocaleString("en-IN");
+    }
+
+    async function refreshAnalytics() {
+      try {
+        const res = await fetch("/api/analytics");
+        const metrics = await res.json();
+
+        document.getElementById("metric-total-volume").innerText = formatINR(metrics.total_volume);
+        document.getElementById("metric-approval-rate").innerText = (Number(metrics.approval_rate || 0)).toFixed(1) + "%";
+        document.getElementById("metric-pending-count").innerText = String(metrics.pending_count ?? "—");
+        document.getElementById("metric-total-applications").innerText = String(metrics.total_applications ?? "—");
+      } catch (e) {
+        console.error(e);
+        alert("Failed to load analytics metrics.");
+      }
+    }
+
+    refreshAnalytics();
+  </script>
+{% endblock %}

@@ -1,0 +1,393 @@
+{% extends "company_base.html" %}
+
+{% set active_nav = "underwriting" %}
+
+{% block title %}Underwriting Hub - Veritas{% endblock %}
+
+{% block header %}
+  <div>
+    <h2 class="text-2xl font-bold font-display text-slate-custom-900 dark:text-slate-custom-50">Underwriting Hub</h2>
+    <p class="text-slate-custom-400 text-sm">Real-time loan application oversight and risk assessment.</p>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="bg-slate-custom-50 dark:bg-slate-custom-800 px-4 py-2 rounded-2xl border border-slate-custom-200 dark:border-slate-custom-700 flex items-center gap-3 text-sm font-medium">
+      <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      System Healthy: 100%
+    </div>
+    <button type="button" class="bg-primary text-white px-6 py-2.5 rounded-2xl font-bold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all" onclick="alert('Demo: export not implemented yet.');">Download Report</button>
+  </div>
+{% endblock %}
+
+{% block content %}
+                <section>
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        <div
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 flex flex-col justify-between">
+                            <div>
+                                <div class="p-3 bg-primary/10 text-primary rounded-2xl w-fit mb-4"><span
+                                        class="material-symbols-outlined text-2xl" style="">pending_actions</span></div>
+                                <p class="text-xs font-bold text-slate-custom-400 uppercase tracking-widest" style="">
+                                    Total Pending</p>
+                                <h3 class="text-4xl font-bold font-display mt-2">{{ metrics.pending_count }}</h3>
+                            </div>
+                            <div class="flex items-center gap-2 text-emerald-600 text-sm font-bold mt-4"><span
+                                    class="material-symbols-outlined text-lg" style="">trending_up</span><span class=""
+                                    style="">12% vs last month</span></div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 flex flex-col justify-between">
+                            <div>
+                                <div class="p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded-2xl w-fit mb-4">
+                                    <span class="material-symbols-outlined text-2xl" style="">timer</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-custom-400 uppercase tracking-widest" style="">
+                                    Avg. Processing</p>
+                                <h3 class="text-4xl font-bold font-display mt-2" style="">4.2 <span
+                                        class="text-sm font-sans font-medium text-slate-custom-500" style="">Days</span>
+                                </h3>
+                            </div>
+                            <div class="flex items-center gap-2 text-emerald-600 text-sm font-bold mt-4"><span
+                                    class="material-symbols-outlined text-lg" style="">trending_down</span><span
+                                    class="" style="">0.5d faster</span></div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 flex flex-col justify-between">
+                            <div>
+                                <div
+                                    class="p-3 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600 rounded-2xl w-fit mb-4">
+                                    <span class="material-symbols-outlined text-2xl" style="">check_circle</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-custom-400 uppercase tracking-widest" style="">
+                                    Approval Rate</p>
+                                <h3 class="text-4xl font-bold font-display mt-2">{{ "%.1f"|format(metrics.approval_rate) }}%</h3>
+                            </div>
+                            <div class="flex items-center gap-2 text-emerald-600 text-sm font-bold mt-4"><span
+                                    class="material-symbols-outlined text-lg" style="">trending_up</span><span class=""
+                                    style="">2.1% increase</span></div>
+                        </div>
+                        <div
+                            class="bg-primary/5 dark:bg-primary/10 border border-primary/20 p-8 rounded-[2.5rem] flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-sm font-bold text-primary uppercase" style="">Critical Alerts</h3>
+                                    <span
+                                        class="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-black"
+                                        style="">3 ACTIVE</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div
+                                        class="bg-white/80 dark:bg-slate-900/80 p-3 rounded-2xl border-l-4 border-red-500 shadow-sm">
+                                        <p class="text-[10px] font-bold text-red-500 uppercase" style="">High Priority
+                                        </p>
+                                        <p class="text-xs font-bold" style="">#APP-82910 KYC</p>
+                                    </div>
+                                    <div
+                                        class="bg-white/80 dark:bg-slate-900/80 p-3 rounded-2xl border-l-4 border-amber-500 shadow-sm">
+                                        <p class="text-[10px] font-bold text-amber-500 uppercase" style="">Review Needed
+                                        </p>
+                                        <p class="text-xs font-bold" style="">#APP-82915 Risk</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div
+                        class="lg:col-span-2 bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 flex flex-col md:flex-row items-center gap-12">
+                        <div class="relative size-56"><svg class="size-full -rotate-90" viewbox="0 0 36 36">
+                                <circle class="stroke-slate-100 dark:stroke-slate-800" cx="18" cy="18" fill="none"
+                                    r="16" stroke-width="3.5"></circle>
+                                <circle class="stroke-primary" cx="18" cy="18" fill="none" r="16"
+                                    stroke-dasharray="68.5, 100" stroke-linecap="round" stroke-width="3.5"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center"><span
+                                    class="text-4xl font-bold font-display" style="">68%</span><span
+                                    class="text-[10px] font-bold text-slate-custom-400 uppercase"
+                                    style="">Approval</span></div>
+                        </div>
+                        <div class="flex-1 space-y-6">
+                            <div>
+                                <h4 class="text-2xl font-bold font-display mb-1" style="">Approval Distribution</h4>
+                                <p class="text-sm text-slate-custom-500" style="">Portfolio performance over ₹45.2 Cr
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div
+                                    class="p-4 rounded-3xl bg-slate-custom-50 dark:bg-slate-custom-800/50 border border-slate-custom-100">
+                                    <p class="text-[10px] font-bold text-slate-custom-400 uppercase mb-1" style="">
+                                        Approved</p>
+                                    <p class="text-xl font-bold" style="">₹32.4 Cr</p>
+                                </div>
+                                <div
+                                    class="p-4 rounded-3xl bg-slate-custom-50 dark:bg-slate-custom-800/50 border border-slate-custom-100">
+                                    <p class="text-[10px] font-bold text-slate-custom-400 uppercase mb-1" style="">
+                                        Rejected</p>
+                                    <p class="text-xl font-bold" style="">₹12.8 Cr</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-emerald-600 font-bold"><span
+                                    class="material-symbols-outlined text-lg" style="">trending_up</span><span class=""
+                                    style="">Volume increased by 8.4% this month</span></div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-custom-200 dark:border-slate-custom-800 flex flex-col">
+                        <h3 class="font-bold font-display text-lg mb-6" style="">Processing Efficiency</h3>
+                        <div class="space-y-5 flex-1 flex flex-col justify-center">
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold"><span class="text-slate-custom-400"
+                                        style="">Same Day</span><span class="" style="">42%</span></div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-primary h-full w-[42%]"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold"><span class="text-slate-custom-400"
+                                        style="">1-3 Days</span><span class="" style="">35%</span></div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-primary/70 h-full w-[35%]"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold"><span class="text-slate-custom-400"
+                                        style="">3-7 Days</span><span class="" style="">18%</span></div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-primary/40 h-full w-[18%]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div
+                        class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-custom-200 dark:border-slate-custom-800 overflow-hidden">
+                        <div
+                            class="p-8 flex items-center justify-between border-b border-slate-custom-100 dark:border-slate-custom-800">
+                            <h3 class="text-xl font-bold font-display text-slate-custom-900 dark:text-slate-custom-50"
+                                style="">Underwriting Queue</h3>
+                            <div class="flex items-center gap-2">
+                                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                                    <button data-filter="All" class="uw-filter px-4 py-1.5 text-xs font-bold bg-primary text-white rounded-lg">All</button>
+                                    <button data-filter="Pending" class="uw-filter px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">Pending</button>
+                                    <button data-filter="Under Review" class="uw-filter px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">Under Review</button>
+                                    <button data-filter="Escalated" class="uw-filter px-4 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg">Escalated</button>
+                                </div>
+                                <input id="uw-search" class="hidden md:block ml-2 w-56 bg-slate-custom-50 dark:bg-slate-custom-800 border border-slate-custom-200 dark:border-slate-custom-700 rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Search name / id…" />
+                                <button
+                                    class="flex items-center gap-2 px-4 py-2 text-xs font-bold border border-slate-custom-200 dark:border-slate-custom-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800"
+                                    type="button" onclick="toggleFilterPanel()">
+                                    <span class="material-symbols-outlined text-sm" style="">filter_list</span> Filter
+                                </button>
+                            </div>
+                        </div>
+                        <div id="uw-filter-panel" class="hidden p-6 border-b border-slate-custom-100 dark:border-slate-custom-800 bg-slate-50/50 dark:bg-slate-800/20">
+                          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                              <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Priority</label>
+                              <select id="uw-priority" class="mt-2 w-full bg-white dark:bg-slate-900 border border-slate-custom-200 dark:border-slate-custom-700 rounded-xl py-2 px-3 text-sm">
+                                <option value="">All</option>
+                                <option value="Normal">Normal</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Min Score</label>
+                              <input id="uw-min-score" type="number" min="300" max="900" class="mt-2 w-full bg-white dark:bg-slate-900 border border-slate-custom-200 dark:border-slate-custom-700 rounded-xl py-2 px-3 text-sm" placeholder="e.g. 650" />
+                            </div>
+                            <div class="flex items-end gap-2">
+                              <button type="button" class="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm" onclick="applyFilters()">Apply</button>
+                              <button type="button" class="px-5 py-2.5 rounded-xl font-bold text-sm border border-slate-custom-200 dark:border-slate-custom-700" onclick="resetFilters()">Reset</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr
+                                        class="font-bold text-slate-custom-400 uppercase tracking-widest border-b border-slate-custom-50 dark:border-slate-custom-800 text-sm">
+                                        <th class="px-6 py-4">Application ID</th>
+                                        <th class="px-6 py-4">Customer Name</th>
+                                        <th class="px-6 py-4">Loan Amount</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4">Priority</th>
+                                        <th class="text-right px-6 py-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="application-queue" class="divide-y divide-slate-custom-50 dark:divide-slate-custom-800">
+                                    <!-- Dynamic rows injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <div class="p-6 border-t border-slate-custom-100 dark:border-slate-custom-800 flex items-center justify-between">
+                  <p id="uw-pagination-text" class="text-xs text-slate-custom-400 font-medium">Showing —</p>
+                  <div class="flex items-center gap-2">
+                    <button id="uw-prev" type="button" class="px-4 py-1.5 text-xs font-bold text-slate-400 border border-slate-custom-200 dark:border-slate-custom-700 rounded-lg" onclick="prevPage()">Prev</button>
+                    <span id="uw-page" class="size-8 flex items-center justify-center text-xs font-bold bg-primary/10 text-primary rounded-lg">1</span>
+                    <button id="uw-next" type="button" class="px-4 py-1.5 text-xs font-bold text-slate-900 dark:text-slate-custom-50 border border-slate-custom-200 dark:border-slate-custom-700 rounded-lg" onclick="nextPage()">Next</button>
+                  </div>
+                </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const STATUS_BADGE = {
+    Approved: "rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 font-bold text-xs px-4 py-1.5",
+    Escalated: "rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 font-bold text-xs px-4 py-1.5",
+    "Under Review": "rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-bold text-xs px-4 py-1.5",
+    Pending: "rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 font-bold text-xs px-4 py-1.5",
+  };
+  const PRIORITY_TEXT = {
+    Critical: "text-red-600",
+    High: "text-red-500",
+    Normal: "text-slate-custom-400",
+  };
+
+  let allApps = [];
+  let filteredApps = [];
+  let currentStatusFilter = "All";
+  let page = 1;
+  const pageSize = 8;
+
+  function toggleFilterPanel() {
+    document.getElementById("uw-filter-panel").classList.toggle("hidden");
+  }
+
+  function normalize(s) {
+    return String(s ?? "").toLowerCase();
+  }
+
+  function applyFilters() {
+    const q = normalize(document.getElementById("uw-search")?.value || "");
+    const priority = document.getElementById("uw-priority").value;
+    const minScore = Number(document.getElementById("uw-min-score").value || 0);
+
+    filteredApps = allApps.filter(a => {
+      if (currentStatusFilter !== "All" && a.status !== currentStatusFilter) return false;
+      if (priority && a.priority !== priority) return false;
+      if (minScore && Number(a.credit_score || 0) < minScore) return false;
+      if (q) {
+        const hay = `${a.application_id} ${a.customer_name} ${a.status} ${a.priority}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    page = 1;
+    renderPage();
+  }
+
+  function resetFilters() {
+    document.getElementById("uw-priority").value = "";
+    document.getElementById("uw-min-score").value = "";
+    const search = document.getElementById("uw-search");
+    if (search) search.value = "";
+    filteredApps = [...allApps];
+    page = 1;
+    renderPage();
+  }
+
+  function setActiveFilterButton(filter) {
+    document.querySelectorAll(".uw-filter").forEach(btn => {
+      const isActive = btn.dataset.filter === filter;
+      btn.className = "uw-filter px-4 py-1.5 text-xs font-bold rounded-lg " + (isActive ? "bg-primary text-white" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200");
+    });
+  }
+
+  function prevPage() {
+    if (page > 1) {
+      page--;
+      renderPage();
+    }
+  }
+
+  function nextPage() {
+    const maxPage = Math.max(1, Math.ceil(filteredApps.length / pageSize));
+    if (page < maxPage) {
+      page++;
+      renderPage();
+    }
+  }
+
+  function renderPage() {
+    const container = document.getElementById("application-queue");
+    const start = (page - 1) * pageSize;
+    const items = filteredApps.slice(start, start + pageSize);
+    container.innerHTML = "";
+
+    if (!items.length) {
+      container.innerHTML = `<tr><td class="px-8 py-6 text-sm text-slate-500" colspan="6">No applications match the current filters.</td></tr>`;
+    } else {
+      items.forEach(app => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-custom-50/50 dark:hover:bg-slate-800/30 transition-colors";
+        const badgeClass = STATUS_BADGE[app.status] || STATUS_BADGE.Pending;
+        const priorityClass = PRIORITY_TEXT[app.priority] || PRIORITY_TEXT.Normal;
+        tr.innerHTML = `
+          <td class="px-8 py-6 font-bold text-slate-custom-900 dark:text-slate-custom-50 text-lg">#${app.application_id}</td>
+          <td class="px-8 py-6">
+            <p class="font-bold text-slate-custom-900 dark:text-slate-custom-50">${app.customer_name}</p>
+            <p class="text-[10px] text-slate-custom-400">Score: ${app.credit_score}</p>
+          </td>
+          <td class="px-8 py-6 font-bold text-slate-custom-900 dark:text-slate-custom-50 text-lg">₹${Number(app.loan_amount || 0).toLocaleString("en-IN")}</td>
+          <td class="px-8 py-6"><span class="${badgeClass}">${app.status}</span></td>
+          <td class="px-8 py-6 text-sm font-bold ${priorityClass}">${app.priority === 'Normal' ? 'Normal' : '! ' + app.priority}</td>
+          <td class="px-8 py-6 text-right">
+            <div class="flex items-center justify-end gap-3">
+              <button type="button" class="px-4 py-1.5 text-xs font-bold bg-primary text-white rounded-lg hover:opacity-90 transition-opacity">Review</button>
+            </div>
+          </td>
+        `;
+        tr.querySelector("button").addEventListener("click", () => {
+          const url = new URL(window.location.origin + "/credit_risk");
+          url.searchParams.set("customer_name", app.customer_name || "");
+          url.searchParams.set("income", String(app.income ?? ""));
+          url.searchParams.set("debt", String(app.debt ?? ""));
+          url.searchParams.set("credit_score", String(app.credit_score ?? ""));
+          url.searchParams.set("loan_amount", String(app.loan_amount ?? ""));
+          url.searchParams.set("duration", String(app.duration ?? ""));
+          url.searchParams.set("age", String(app.age ?? ""));
+          url.searchParams.set("emp_length", String(app.emp_length ?? ""));
+          window.location.href = url.toString();
+        });
+        container.appendChild(tr);
+      });
+    }
+
+    const maxPage = Math.max(1, Math.ceil(filteredApps.length / pageSize));
+    document.getElementById("uw-page").innerText = String(page);
+    document.getElementById("uw-pagination-text").innerText = `Showing ${items.length ? (start + 1) : 0}-${items.length ? (start + items.length) : 0} of ${filteredApps.length} applications`;
+    document.getElementById("uw-prev").disabled = page <= 1;
+    document.getElementById("uw-next").disabled = page >= maxPage;
+    document.getElementById("uw-prev").classList.toggle("opacity-50", page <= 1);
+    document.getElementById("uw-next").classList.toggle("opacity-50", page >= maxPage);
+  }
+
+  async function fetchApplications() {
+    try {
+      const response = await fetch("/api/applications");
+      allApps = await response.json();
+      filteredApps = [...allApps];
+      applyFilters();
+    } catch (err) {
+      console.error("Failed to fetch applications:", err);
+      document.getElementById("application-queue").innerHTML = `<tr><td class="px-8 py-6 text-sm text-red-500" colspan="6">Failed to load applications.</td></tr>`;
+    }
+  }
+
+  document.querySelectorAll(".uw-filter").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentStatusFilter = btn.dataset.filter;
+      setActiveFilterButton(currentStatusFilter);
+      applyFilters();
+    });
+  });
+  setActiveFilterButton(currentStatusFilter);
+  document.getElementById("uw-search")?.addEventListener("input", () => applyFilters());
+
+  fetchApplications();
+</script>
+{% endblock %}

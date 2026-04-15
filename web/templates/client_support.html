@@ -1,0 +1,133 @@
+{% extends "client_base.html" %}
+{% set active_client_nav = "support" %}
+{% block title %}Client Support - Veritas{% endblock %}
+
+{% block content %}
+  <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8">
+    <h1 class="text-2xl font-display font-bold">Support Center</h1>
+    <p class="text-slate-500 text-sm mt-2">Raise a ticket for document, verification, or application issues.</p>
+  </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
+      <h2 class="font-bold text-lg mb-4">Create Ticket</h2>
+      <form id="support-form" class="space-y-4">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400">Subject</label>
+          <input id="ticket-subject" class="mt-2 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="e.g. Unable to upload proof of income" />
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400">Message</label>
+          <textarea id="ticket-message" rows="5" class="mt-2 w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your issue in detail..."></textarea>
+        </div>
+        <button type="submit" class="px-5 py-2.5 rounded-full font-bold bg-primary text-white shadow-lg shadow-primary/20">Submit Ticket</button>
+      </form>
+    </div>
+
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-bold text-lg">My Tickets</h2>
+        <button id="refresh-tickets" type="button" class="text-sm font-bold text-primary">Refresh</button>
+      </div>
+      <div id="ticket-list" class="space-y-3">
+        {% if tickets %}
+          {% for t in tickets %}
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-semibold">{{ t.subject }}</p>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {% if t.status == 'Open' %}bg-amber-100 text-amber-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">{{ t.status }}</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">{{ t.message }}</p>
+            <p class="text-[10px] text-slate-400 mt-2">#{{ t.id }} • {{ t.created_at }}</p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-sm text-slate-500">No tickets yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section id="support-alert" class="hidden rounded-xl p-4 text-sm font-medium"></section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function showAlert(message, type = "info") {
+    const el = document.getElementById("support-alert");
+    const classes = {
+      success: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+      error: "bg-red-50 text-red-700 border border-red-200",
+      info: "bg-primary/10 text-primary border border-primary/20"
+    };
+    el.className = `${classes[type] || classes.info} rounded-xl p-4 text-sm font-medium`;
+    el.innerText = message;
+    el.classList.remove("hidden");
+    setTimeout(() => el.classList.add("hidden"), 3000);
+  }
+
+  function renderTickets(tickets) {
+    const list = document.getElementById("ticket-list");
+    list.innerHTML = "";
+    if (!tickets.length) {
+      list.innerHTML = `<p class="text-sm text-slate-500">No tickets yet.</p>`;
+      return;
+    }
+    tickets.forEach((t) => {
+      const div = document.createElement("div");
+      div.className = "p-4 rounded-xl border border-slate-200 dark:border-slate-700";
+      div.innerHTML = `
+        <div class="flex items-center justify-between gap-3">
+          <p class="font-semibold">${t.subject}</p>
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${t.status === "Open" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}">${t.status}</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">${t.message}</p>
+        <p class="text-[10px] text-slate-400 mt-2">#${t.id} • ${t.created_at}</p>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  async function refreshTickets() {
+    try {
+      const res = await fetch("/api/client/support");
+      const data = await res.json();
+      renderTickets(data);
+    } catch (err) {
+      console.error(err);
+      showAlert("Failed to fetch tickets.", "error");
+    }
+  }
+
+  document.getElementById("support-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const subject = document.getElementById("ticket-subject").value.trim();
+    const message = document.getElementById("ticket-message").value.trim();
+    if (!subject || !message) {
+      showAlert("Please provide both subject and message.", "error");
+      return;
+    }
+    try {
+      const res = await fetch("/api/client/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject, message })
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        showAlert(data.error || "Could not create ticket.", "error");
+        return;
+      }
+      document.getElementById("ticket-subject").value = "";
+      document.getElementById("ticket-message").value = "";
+      renderTickets(data.tickets || []);
+      showAlert("Support ticket created successfully.", "success");
+    } catch (err) {
+      console.error(err);
+      showAlert("Ticket submission failed.", "error");
+    }
+  });
+
+  document.getElementById("refresh-tickets").addEventListener("click", refreshTickets);
+</script>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "client_base.html" %}
+{% set active_client_nav = "documents" %}
+{% block title %}Client Documents - Veritas{% endblock %}
+
+{% block content %}
+  <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-display font-bold">Document Upload Center</h1>
+        <p class="text-slate-500 text-sm mt-1">Upload required files for Application #{{ client_app.application_id }}</p>
+      </div>
+      <button id="digilocker-btn" type="button" class="px-5 py-2.5 rounded-full font-bold bg-primary text-white shadow-lg shadow-primary/20">Auto-fill via DigiLocker</button>
+    </div>
+  </section>
+
+  <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8">
+    <div id="documents-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+  </section>
+
+  <section id="client-alert" class="hidden rounded-xl p-4 text-sm font-medium"></section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let clientApp = {{ client_app | tojson }};
+
+  function showAlert(message, type = "info") {
+    const el = document.getElementById("client-alert");
+    const classes = {
+      success: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+      error: "bg-red-50 text-red-700 border border-red-200",
+      info: "bg-primary/10 text-primary border border-primary/20"
+    };
+    el.className = `${classes[type] || classes.info} rounded-xl p-4 text-sm font-medium`;
+    el.innerText = message;
+    el.classList.remove("hidden");
+    setTimeout(() => el.classList.add("hidden"), 3000);
+  }
+
+  function formatStatus(status) {
+    if (status === "uploaded") return "Uploaded";
+    if (status === "not_started") return "Not Started";
+    return status;
+  }
+
+  function cardStatusClass(status) {
+    if (status === "uploaded") return "bg-emerald-100 text-emerald-700";
+    return "bg-slate-100 text-slate-600";
+  }
+
+  function renderDocuments() {
+    const grid = document.getElementById("documents-grid");
+    grid.innerHTML = "";
+    const docs = clientApp.documents || {};
+
+    Object.keys(docs).forEach((key) => {
+      const doc = docs[key];
+      const wrapper = document.createElement("div");
+      wrapper.className = "border border-slate-200 dark:border-slate-700 rounded-xl p-4";
+      wrapper.innerHTML = `
+        <div class="flex items-start justify-between gap-2 mb-3">
+          <div>
+            <p class="font-semibold">${doc.label}</p>
+            <p class="text-xs text-slate-500 mt-1">${doc.filename ? doc.filename : "No file uploaded yet"}</p>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${cardStatusClass(doc.status)}">${formatStatus(doc.status)}</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <input type="file" id="file-${key}" class="text-xs block w-full file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-semibold" />
+          <button type="button" data-doc-key="${key}" class="upload-btn px-4 py-2 text-xs rounded-lg bg-primary text-white font-bold">Upload</button>
+        </div>
+      `;
+      grid.appendChild(wrapper);
+    });
+  }
+
+  async function refreshClientApp() {
+    const res = await fetch("/api/client/application");
+    clientApp = await res.json();
+    renderDocuments();
+    bindUploadButtons();
+  }
+
+  async function uploadDocument(documentKey) {
+    const input = document.getElementById(`file-${documentKey}`);
+    if (!input || !input.files || !input.files.length) {
+      showAlert("Please choose a file before uploading.", "error");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("document_key", documentKey);
+    formData.append("file", input.files[0]);
+
+    try {
+      const res = await fetch("/api/client/document-upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        showAlert(data.error || "Upload failed.", "error");
+        return;
+      }
+      clientApp = data.application;
+      renderDocuments();
+      bindUploadButtons();
+      showAlert("Document uploaded successfully.", "success");
+    } catch (err) {
+      console.error(err);
+      showAlert("Upload failed due to a network error.", "error");
+    }
+  }
+
+  function bindUploadButtons() {
+    document.querySelectorAll(".upload-btn").forEach((btn) => {
+      btn.addEventListener("click", () => uploadDocument(btn.dataset.docKey));
+    });
+  }
+
+  document.getElementById("digilocker-btn").addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/client/digilocker", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        showAlert(data.error || "DigiLocker sync failed.", "error");
+        return;
+      }
+      clientApp = data.application;
+      renderDocuments();
+      bindUploadButtons();
+      showAlert("Documents fetched through DigiLocker simulation.", "success");
+    } catch (err) {
+      console.error(err);
+      showAlert("DigiLocker request failed.", "error");
+    }
+  });
+
+  renderDocuments();
+  bindUploadButtons();
+  refreshClientApp().catch((err) => {
+    console.error(err);
+    showAlert("Failed to load latest application data.", "error");
+  });
+</script>
+{% endblock %}
