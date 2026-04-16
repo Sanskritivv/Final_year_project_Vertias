@@ -9,7 +9,12 @@
         <h1 class="text-2xl font-display font-bold">Document Upload Center</h1>
         <p class="text-slate-500 text-sm mt-1">Upload required files for Application #{{ client_app.application_id }}</p>
       </div>
-      <button id="digilocker-btn" type="button" class="px-5 py-2.5 rounded-full font-bold bg-primary text-white shadow-lg shadow-primary/20">Auto-fill via DigiLocker</button>
+      <div id="next-step-container" class="mt-4 {% if not client_app.doc_step_complete %}hidden{% endif %}">
+        <a href="/client_onboarding" class="px-8 py-3 rounded-2xl font-black bg-emerald-500 text-white shadow-lg shadow-emerald-200/50 uppercase tracking-widest text-xs inline-flex items-center gap-2 hover:scale-105 transition-transform">
+          Next Step: Biometrics
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -103,6 +108,11 @@
       renderDocuments();
       bindUploadButtons();
       showAlert("Document uploaded successfully.", "success");
+      
+      // Show next step if complete
+      if (clientApp.doc_step_complete) {
+        document.getElementById("next-step-container").classList.remove("hidden");
+      }
     } catch (err) {
       console.error(err);
       showAlert("Upload failed due to a network error.", "error");
@@ -127,6 +137,11 @@
       renderDocuments();
       bindUploadButtons();
       showAlert("Documents fetched through DigiLocker simulation.", "success");
+      
+      // Show next step if complete
+      if (clientApp.doc_step_complete) {
+        document.getElementById("next-step-container").classList.remove("hidden");
+      }
     } catch (err) {
       console.error(err);
       showAlert("DigiLocker request failed.", "error");

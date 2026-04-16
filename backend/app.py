@@ -19,6 +19,7 @@ from database import (
     create_support_ticket,
     get_support_tickets
 )
+from iris_engine.verifier import IrisVerifier, decode_image
 
 # Configure paths relative to this file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,6 +64,44 @@ def client_required(f):
         return f(*args, **kwargs)
     return decorated
 
+def get_onboarding_next_step(app_data):
+    """
+    Determines the next step in the onboarding flow.
+    Returns: endpoint_name
+    """
+    if not app_data.get('doc_step_complete'):
+        return 'client_documents'
+    if not app_data.get('iris_verified'):
+        return 'client_iris'
+    if app_data.get('status') != 'Submitted':
+        return 'client_review'
+    return 'client_dashboard'
+
+def onboarding_enforcer(f):
+    """
+    Redirects user to the correct onboarding step if they haven't finished.
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if session.get('user_role') != 'client':
+            return redirect(url_for('login'))
+        
+        username = session.get('username')
+        app_data = get_or_create_client_application(username)
+        
+        target = get_onboarding_next_step(app_data)
+        
+        # If the user is trying to access a page they aren't ready for, redirect.
+        # But allow them to stay on the page if it IS the target step.
+        if request.endpoint != target and target != 'client_dashboard':
+            # Special case: allow dashboard if fully submitted
+            if app_data.get('status') == 'Submitted' and request.endpoint == 'client_dashboard':
+                 return f(*args, **kwargs)
+            return redirect(url_for(target))
+            
+        return f(*args, **kwargs)
+    return decorated
+
 # Initialize Database
 init_db()
 
@@ -71,14 +110,11 @@ MODEL_PATH = os.path.join(BASE_DIR, 'model.joblib')
 ENCODER_PATH = os.path.join(BASE_DIR, 'encoders.joblib')
 FEATURES_PATH = os.path.join(BASE_DIR, 'features.joblib')
 
-try:
-    model = joblib.load(MODEL_PATH)
-    encoders = joblib.load(ENCODER_PATH)
-    feature_names = joblib.load(FEATURES_PATH)
-    print("Real ML models loaded successfully.")
-except Exception as e:
-    print(f"Warning: ML models not found. Using dummy fallback. Error: {e}")
-    model = None
+model = None
+
+# Initialize Iris Verifier
+print("Initializing Iris Recognition Engine...")
+iris_verifier = IrisVerifier()
 
 # Logic to map Credit Score to Loan Grade
 def score_to_grade(score):
@@ -122,24 +158,46 @@ def login():
 def dashboard():
     return render_template('dashboard.html', metrics=get_analytics())
 
-@app.route('/client_iris')
-@client_required
-def client_iris():
-    return render_template('client_iris.html')
-
 @app.route('/client_dashboard')
-@client_required
+@onboarding_enforcer
 def client_dashboard():
     username = session.get('username', 'client')
     app_data = get_or_create_client_application(username)
-    return render_template('client_dashboard.html', client_app=app_data)
+    # Fetch all applications for the main view
+    all_apps = get_all_applications()
+    # Filter for this specific client (Demo logic: in real world, filter would be in SQL)
+    client_apps = [a for a in all_apps if a['customer_name'] == username or a['customer_name'] == 'Rajesh Kumar'] # Rajesh is dummy for client role
+    return render_template('client_dashboard.html', applications=client_apps, client_app=app_data)
+
+@app.route('/client_onboarding')
+@client_required
+def client_onboarding():
+    username = session.get('username')
+    app_data = get_or_create_client_application(username)
+    target = get_onboarding_next_step(app_data)
+    # If the target is the dashboard, it means onboarding is done but we might need 
+    # to show the review page if status isn't submitted yet.
+    # get_onboarding_next_step already handles this logic.
+    return redirect(url_for(target))
 
 @app.route('/client_documents')
-@client_required
+@onboarding_enforcer
 def client_documents():
     username = session.get('username', 'client')
     app_data = get_or_create_client_application(username)
     return render_template('client_documents.html', client_app=app_data)
+
+@app.route('/client_iris')
+@onboarding_enforcer
+def client_iris():
+    return render_template('client_iris.html')
+
+@app.route('/client_review')
+@onboarding_enforcer
+def client_review():
+    username = session.get('username', 'client')
+    app_data = get_or_create_client_application(username)
+    return render_template('client_review.html', client_app=app_data)
 
 @app.route('/client_support')
 @client_required
@@ -219,7 +277,39 @@ def api_client_digilocker():
 @client_required
 def api_client_iris_verify():
     username = session.get('username', 'client')
-    updated = set_client_iris_verified(username)
+    
+    data = request.get_json(silent=True) or {}
+    image_base64 = data.get('image')
+    
+    if not image_base64:
+        return jsonify({'ok': False, 'error': 'NO_IMAGE', 'message': 'No image data received.'}), 400
+
+    try:
+        # Decode and Verify
+        image_bgr = decode_image(image_base64)
+        result = iris_verifier.verify(image_bgr)
+        
+        if result['ok']:
+            updated = set_client_iris_verified(username)
+            return jsonify({'ok': True, 'application': updated, 'message': result['message']})
+        else:
+            return jsonify({'ok': False, 'error': result['error'], 'message': result['message']}), 400
+            
+    except Exception as e:
+        print(f"Iris verification error: {e}")
+        return jsonify({'ok': False, 'error': 'SERVER_ERROR', 'message': 'An error occurred during biometric processing.'}), 500
+
+@app.route('/api/client/submit', methods=['POST'])
+@client_required
+def api_client_submit():
+    username = session.get('username', 'client')
+    # Update status to Submitted
+    from database import submit_client_onboarding
+    updated = submit_client_onboarding(username)
+    
+    # Also create a formal application entry if needed
+    # (In this schema, we just transition the existing onboarding record to 'Submitted')
+    
     return jsonify({'ok': True, 'application': updated})
 
 @app.route('/api/client/support', methods=['GET', 'POST'])

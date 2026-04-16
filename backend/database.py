@@ -264,6 +264,26 @@ def mark_client_digilocker(username):
     conn.close()
     return get_or_create_client_application(username)
 
+def submit_client_onboarding(username):
+    conn = get_db_connection()
+    row = _get_or_create_client_application_row(conn, username)
+    app = dict(row)
+    
+    # Only allow submission if documents and iris are ready
+    if app.get("final_review_ready"):
+        conn.execute(
+            '''
+            UPDATE client_applications
+            SET status = 'Submitted', updated_at = CURRENT_TIMESTAMP
+            WHERE username = ?
+            ''',
+            (username,)
+        )
+        conn.commit()
+    
+    conn.close()
+    return get_or_create_client_application(username)
+
 def create_support_ticket(username, subject, message):
     conn = get_db_connection()
     cursor = conn.cursor()

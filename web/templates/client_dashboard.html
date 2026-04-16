@@ -1,94 +1,99 @@
 {% extends "client_base.html" %}
 {% set active_client_nav = "dashboard" %}
-{% block title %}Client Dashboard - Veritas{% endblock %}
+{% block title %}Dashboard - Veritas Fintech{% endblock %}
 
 {% block content %}
-  <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8">
-    <h1 class="text-2xl font-display font-bold">Application Overview</h1>
-    <p class="text-slate-500 text-sm mt-2">
-      Application ID: #{{ client_app.application_id }} • Estimated loan: ₹ {{ "{:,.0f}".format(client_app.estimated_loan or 0) }} • Status: {{ client_app.status }}
-    </p>
-  </section>
-
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="p-5 rounded-xl border {% if client_app.doc_step_complete %}border-emerald-300 bg-emerald-50/70 dark:bg-emerald-900/10{% else %}border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900{% endif %}">
-      <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Step 1</p>
-      <p class="font-bold mt-1">Documents</p>
-      <p class="text-sm mt-1 {% if client_app.doc_step_complete %}text-emerald-600 font-semibold{% else %}text-slate-500{% endif %}">
-        {% if client_app.doc_step_complete %}Complete{% else %}Pending uploads{% endif %}
-      </p>
-      <a href="/client_documents" class="inline-flex mt-3 text-xs font-bold text-primary">Go to Documents</a>
-    </div>
-    <div class="p-5 rounded-xl border {% if client_app.iris_verified %}border-emerald-300 bg-emerald-50/70 dark:bg-emerald-900/10{% else %}border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900{% endif %}">
-      <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Step 2</p>
-      <p class="font-bold mt-1">Iris Verification</p>
-      <p class="text-sm mt-1 {% if client_app.iris_verified %}text-emerald-600 font-semibold{% else %}text-slate-500{% endif %}">
-        {% if client_app.iris_verified %}Verified{% else %}Not verified{% endif %}
-      </p>
-      <a href="/client_iris" class="inline-flex mt-3 text-xs font-bold text-primary">Start Iris Scan</a>
-    </div>
-    <div class="p-5 rounded-xl border {% if client_app.final_review_ready %}border-emerald-300 bg-emerald-50/70 dark:bg-emerald-900/10{% else %}border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900{% endif %}">
-      <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Step 3</p>
-      <p class="font-bold mt-1">Final Review</p>
-      <p class="text-sm mt-1 {% if client_app.final_review_ready %}text-emerald-600 font-semibold{% else %}text-slate-500{% endif %}">
-        {% if client_app.final_review_ready %}Ready for review{% else %}Waiting for step completion{% endif %}
-      </p>
-      <a href="/client_support" class="inline-flex mt-3 text-xs font-bold text-primary">Need help?</a>
-    </div>
-  </section>
-
-  <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-bold text-lg">Document Status</h2>
-      <button id="digilocker-btn" type="button" class="px-5 py-2.5 rounded-full font-bold bg-primary text-white shadow-lg shadow-primary/20">Connect DigiLocker</button>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {% for key, doc in client_app.documents.items() %}
-      <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-        <div>
-          <p class="font-semibold">{{ doc.label }}</p>
-          <p class="text-xs text-slate-500 mt-1">{{ doc.filename or "No file uploaded yet" }}</p>
+<div class="flex flex-col lg:flex-row gap-8">
+    <!-- Sidebar Navigation -->
+    <aside class="lg:w-64 flex-shrink-0">
+        <div class="sticky top-24 space-y-2">
+            <a href="/client_dashboard" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-white font-bold shadow-lg shadow-primary/20 transition-all">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+            <a href="/client_documents" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                <span class="material-symbols-outlined">folder</span>
+                My Documents
+            </a>
+            <a href="/client_support" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                <span class="material-symbols-outlined">support_agent</span>
+                Support
+            </a>
+            <div class="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
+                <a href="/logout" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all">
+                    <span class="material-symbols-outlined">logout</span>
+                    Sign Out
+                </a>
+            </div>
         </div>
-        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {% if doc.status == 'uploaded' %}bg-emerald-100 text-emerald-700{% else %}bg-slate-100 text-slate-600{% endif %}">
-          {{ doc.status.replace('_', ' ') }}
-        </span>
-      </div>
-      {% endfor %}
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 space-y-8">
+        <!-- Welcome Header -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 size-64 bg-primary/5 rounded-full blur-3xl"></div>
+            <div class="relative z-10">
+                <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">My Applications</h1>
+                <p class="text-slate-500 dark:text-slate-400">View and track the status of your loan requests.</p>
+            </div>
+        </div>
+
+        <!-- Application List -->
+        <div class="space-y-4">
+            {% if not applications %}
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-12 border border-dashed border-slate-300 dark:border-slate-700 text-center">
+                <div class="size-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-outlined text-slate-400 text-4xl">inventory_2</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">No active applications</h3>
+                <p class="text-slate-500 mb-6">You haven't submitted any loan applications yet.</p>
+                <button class="bg-primary text-white px-8 py-3 rounded-2xl font-bold uppercase tracking-widest text-xs hover:scale-105 transition-transform">Start New Application</button>
+            </div>
+            {% else %}
+            <div class="grid grid-cols-1 gap-4">
+                {% for app in applications %}
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/30 transition-all group flex flex-col md:flex-row md:items-center gap-6">
+                    <!-- App Icon -->
+                    <div class="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                    
+                    <!-- App Details -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-3 mb-1">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white truncate">Personal Loan - ₹ {{ "{:,.0f}".format(app.loan_amount or 0) }}</h3>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 tracking-wider">{{ app.status }}</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">fingerprint</span>ID: {{ app.application_id }}</span>
+                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>{{ app.created_at }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="flex items-center gap-8 pr-4">
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase mb-0.5">Term</p>
+                            <p class="text-sm font-mono font-bold text-slate-700 dark:text-slate-300">{{ app.duration or 36 }} Months</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase mb-0.5">Risk Rating</p>
+                            <p class="text-sm font-mono font-bold text-emerald-500">A+</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex-shrink-0">
+                        <button class="size-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
     </div>
-  </section>
-
-  <section id="client-alert" class="hidden rounded-xl p-4 text-sm font-medium"></section>
-{% endblock %}
-
-{% block scripts %}
-<script>
-  function showAlert(message, type = "info") {
-    const el = document.getElementById("client-alert");
-    const classes = {
-      success: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-      error: "bg-red-50 text-red-700 border border-red-200",
-      info: "bg-primary/10 text-primary border border-primary/20"
-    };
-    el.className = `${classes[type] || classes.info} rounded-xl p-4 text-sm font-medium`;
-    el.innerText = message;
-    el.classList.remove("hidden");
-    setTimeout(() => el.classList.add("hidden"), 3000);
-  }
-
-  document.getElementById("digilocker-btn").addEventListener("click", async () => {
-    try {
-      const res = await fetch("/api/client/digilocker", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        showAlert(data.error || "DigiLocker sync failed.", "error");
-        return;
-      }
-      showAlert("Documents fetched through DigiLocker simulation. Refreshing...", "success");
-      setTimeout(() => window.location.reload(), 800);
-    } catch (err) {
-      console.error(err);
-      showAlert("DigiLocker request failed.", "error");
-    }
-  });
-</script>
+</div>
 {% endblock %}

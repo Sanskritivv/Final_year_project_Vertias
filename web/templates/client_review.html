@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Final Review - Veritas</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1955e6",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a"
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"],
+                        "sans": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2.25rem", "xl": "3rem", "full": "9999px" }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between px-8 py-5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-3 text-primary">
+            <div class="size-9 flex items-center justify-center bg-primary/10 rounded-xl">
+                <svg class="size-5 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+                </svg>
+            </div>
+            <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white">Veritas</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-slate-400 font-semibold uppercase tracking-widest">
+            <span class="material-symbols-outlined text-sm text-emerald-500">lock</span>
+            Secure Session
+        </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4">
+        <div class="max-w-2xl mx-auto flex items-center justify-center gap-0">
+            <div class="flex flex-col items-center gap-1.5 focus:outline-none">
+                <div class="flex items-center justify-center size-9 rounded-full bg-emerald-500 text-white">
+                    <span class="material-symbols-outlined text-sm">check</span>
+                </div>
+                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Documents</p>
+            </div>
+            <div class="h-px bg-emerald-500 w-16 sm:w-24 mb-4"></div>
+            <div class="flex flex-col items-center gap-1.5">
+                <div class="flex items-center justify-center size-9 rounded-full bg-emerald-500 text-white">
+                    <span class="material-symbols-outlined text-sm">check</span>
+                </div>
+                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Iris Scan</p>
+            </div>
+            <div class="h-px bg-primary w-16 sm:w-24 mb-4"></div>
+            <div class="flex flex-col items-center gap-1.5">
+                <div class="flex items-center justify-center size-9 rounded-full bg-primary text-white ring-4 ring-primary/20">
+                    <span class="material-symbols-outlined text-sm">fact_check</span>
+                </div>
+                <p class="text-[10px] font-bold text-primary uppercase tracking-wide">Final Review</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-4xl mx-auto w-full p-8 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">Review Your Application</h1>
+            <p class="text-slate-500 dark:text-slate-400">Please verify all information before final submission.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Documents Summary -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">description</span>
+                    Document Check
+                </h2>
+                <div class="space-y-4">
+                    {% for key, doc in client_app.documents.items() %}
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                        <div>
+                            <p class="text-xs font-bold text-slate-900 dark:text-white">{{ doc.label }}</p>
+                            <p class="text-[10px] text-slate-400 font-mono">{{ doc.filename or "Verified" }}</p>
+                        </div>
+                        <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Biometric Summary -->
+            <div class="space-y-8">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">fingerprint</span>
+                        Biometrics
+                    </h2>
+                    <div class="flex items-center gap-6">
+                        <div class="size-20 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                            <span class="material-symbols-outlined text-4xl">visibility</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-900 dark:text-white">Iris Pattern Verified</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">Identity confirmed via secure biometric hashing engine v4.8.2.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Card -->
+                <div class="bg-primary rounded-3xl p-8 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 size-48 bg-white/10 rounded-full blur-3xl"></div>
+                    <h3 class="text-xl font-bold mb-2">Ready to submit?</h3>
+                    <p class="text-white/70 text-sm mb-6">By clicking submit, you confirm that all provided information is accurate.</p>
+                    <button onclick="submitOnboarding()" class="w-full bg-white text-primary px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] transition-transform active:scale-95">
+                        Submit Application
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function submitOnboarding() {
+            try {
+                const response = await fetch('/api/client/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.ok) {
+                    window.location.href = '/client_dashboard';
+                } else {
+                    alert('Submission failed. Please try again.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred during submission.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -112,107 +112,227 @@
                 </p>
             </div>
 
-            <!-- Scanner UI -->
-            <div class="relative group cursor-pointer" onclick="startScan()">
-                <div class="absolute -inset-4 bg-primary/20 rounded-[4rem] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div class="relative aspect-square max-w-[340px] mx-auto bg-slate-900 border-2 border-slate-800 rounded-[3.5rem] p-10 overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]">
+            <!-- Scanner Viewport -->
+            <div class="relative">
+                <!-- Decorative Glow -->
+                <div class="absolute -inset-4 bg-primary/20 rounded-[4rem] blur-3xl opacity-20 transition-opacity"></div>
+                
+                <div class="relative aspect-square max-w-[340px] mx-auto bg-slate-900 border-2 border-slate-800 rounded-[3.5rem] p-10 overflow-hidden shadow-2xl">
                     <!-- Corner brackets -->
-                    <div class="absolute top-7 left-7 size-10 border-t-4 border-l-4 border-primary rounded-tl-2xl"></div>
-                    <div class="absolute top-7 right-7 size-10 border-t-4 border-r-4 border-primary rounded-tr-2xl"></div>
-                    <div class="absolute bottom-7 left-7 size-10 border-b-4 border-l-4 border-primary rounded-bl-2xl"></div>
-                    <div class="absolute bottom-7 right-7 size-10 border-b-4 border-r-4 border-primary rounded-br-2xl"></div>
+                    <div class="absolute top-7 left-7 size-10 border-t-4 border-l-4 border-primary rounded-tl-2xl z-20"></div>
+                    <div class="absolute top-7 right-7 size-10 border-t-4 border-r-4 border-primary rounded-tr-2xl z-20"></div>
+                    <div class="absolute bottom-7 left-7 size-10 border-b-4 border-l-4 border-primary rounded-bl-2xl z-20"></div>
+                    <div class="absolute bottom-7 right-7 size-10 border-b-4 border-r-4 border-primary rounded-br-2xl z-20"></div>
 
-                    <div id="scanner-visual" class="relative size-full flex items-center justify-center opacity-40 transition-opacity duration-500">
-                        <span class="material-symbols-outlined text-[160px] text-primary iris-glow">remove_red_eye</span>
-                        <div id="scan-line" class="scanner-line hidden"></div>
+                    <div id="scanner-visual" class="relative size-full flex items-center justify-center overflow-hidden rounded-3xl bg-slate-800">
+                        <!-- Camera Feed -->
+                        <video id="webcam" autoplay playsinline class="absolute inset-0 size-full object-cover grayscale opacity-0 transition-opacity duration-700"></video>
+                        
+                        <span id="eye-placeholder" class="material-symbols-outlined text-[160px] text-primary iris-glow transition-opacity duration-300">remove_red_eye</span>
+                        <div id="scan-line" class="scanner-line hidden z-10"></div>
                     </div>
 
                     <!-- Status overlay -->
-                    <div id="scan-status" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+                    <div id="scan-status" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 z-30 pointer-events-none">
                         <div id="progress-container" class="w-44 h-1 bg-slate-700 rounded-full mb-4 overflow-hidden">
                             <div id="progress-bar" class="h-full bg-primary w-0 transition-all duration-300 rounded-full"></div>
                         </div>
                         <p id="status-text" class="text-xs font-bold font-mono tracking-widest text-primary">INITIALIZING...</p>
                     </div>
                 </div>
-
-                <p id="instruction" class="mt-7 text-sm font-bold text-primary animate-pulse uppercase tracking-[0.2em]">
-                    Tap to begin scan
-                </p>
             </div>
+
+            <!-- Controls (Moved outside relative group to ensure they aren't blocked) -->
+            <div id="camera-controls" class="mt-8 relative z-50 flex flex-col items-center gap-5">
+                <button id="start-btn" class="relative group bg-primary text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-sm transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
+                    <span class="relative z-10">Start Biometric Scan</span>
+                    <div class="absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="size-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <p id="instruction" class="text-[11px] font-bold text-primary/70 uppercase tracking-[0.2em]">
+                        Center your eye in the viewport
+                    </p>
+                </div>
+            </div>
+
+            <!-- Hidden canvas for capture -->
+            <canvas id="snapshot" class="hidden" width="640" height="480"></canvas>
 
             <!-- Info strip -->
             <div class="mt-12 grid grid-cols-3 gap-4">
                 <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                     <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Engine</p>
-                    <p class="text-xs font-mono text-slate-700 dark:text-slate-300">v4.8.2-Neural</p>
+                    <p class="text-xs font-mono text-slate-700 dark:text-slate-300">v4.8.2-ResNet50</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Trust Score</p>
-                    <p class="text-xs font-mono text-emerald-500">99.98%</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Status</p>
+                    <p id="system-status" class="text-xs font-mono text-emerald-500">READY</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Latency</p>
-                    <p class="text-xs font-mono text-slate-700 dark:text-slate-300">4.2ms</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Mode</p>
+                    <p class="text-xs font-mono text-slate-700 dark:text-slate-300">Active-IR</p>
                 </div>
             </div>
 
             <p class="mt-8 text-xs text-slate-400">
                 <span class="material-symbols-outlined text-xs align-middle">info</span>
-                Your biometric data is processed locally and never stored.
+                Your biometric data is processed securely and locally.
             </p>
         </div>
     </main>
 
     <script>
-        let scanning = false;
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('snapshot');
+        const scannerVisual = document.getElementById('scanner-visual');
+        const placeholder = document.getElementById('eye-placeholder');
+        const scanLine = document.getElementById('scan-line');
+        const scanStatus = document.getElementById('scan-status');
+        const progressBar = document.getElementById('progress-bar');
+        const statusText = document.getElementById('status-text');
+        const instruction = document.getElementById('instruction');
+        const startBtn = document.getElementById('start-btn');
+        const systemStatus = document.getElementById('system-status');
 
-        function startScan() {
-            if (scanning) return;
-            scanning = true;
+        let stream = null;
+        let isProcessing = false;
 
-            const scanLine = document.getElementById('scan-line');
-            const scannerVisual = document.getElementById('scanner-visual');
-            const scanStatus = document.getElementById('scan-status');
-            const progressBar = document.getElementById('progress-bar');
-            const statusText = document.getElementById('status-text');
-            const instruction = document.getElementById('instruction');
+        function log(msg) {
+            console.log("> " + msg);
+        }
+
+        // Initialize button listener
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                log("Biometric session initiated.");
+                initCamera();
+            });
+        }
+
+        async function initCamera() {
+            try {
+                startBtn.disabled = true;
+                startBtn.innerText = 'Initializing...';
+                
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error("Biometric API requires a secure context (HTTPS or localhost).");
+                }
+
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: "user",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                log("Camera access granted.");
+                video.srcObject = stream;
+                
+                const metadataTimeout = setTimeout(() => {
+                    if (video.readyState >= 2) handleMetadataLoaded();
+                }, 4000);
+
+                video.onloadedmetadata = () => {
+                    clearTimeout(metadataTimeout);
+                    handleMetadataLoaded();
+                };
+            } catch (err) {
+                console.error("Camera error:", err);
+                handleError("Biometric Error: " + err.message);
+                alert("Identity Verification Error: " + err.message);
+                startBtn.disabled = false;
+                startBtn.innerText = 'Retry Scanner';
+            }
+        }
+
+        function handleMetadataLoaded() {
+            video.play().catch(e => console.error("Video stream failure:", e));
+            video.classList.remove('opacity-0');
+            video.classList.add('opacity-100');
+            placeholder.classList.add('opacity-0');
+            startBtn.innerText = 'Scanning...';
+            systemStatus.innerText = 'SCANNING';
+            startScan();
+        }
+
+        async function startScan() {
+            if (isProcessing) return;
+            isProcessing = true;
+            log("Syncing retinal patterns...");
 
             scanLine.classList.remove('hidden');
-            scannerVisual.classList.remove('opacity-40');
-            scannerVisual.classList.add('opacity-100');
             scanStatus.classList.add('opacity-100');
-            instruction.classList.add('invisible');
+            instruction.innerText = 'Keep your eye steady';
 
             let progress = 0;
-            const statuses = ['MAPPING RETINA...', 'CHECKING TEXTURE...', 'ALGORITHMIC MATCHING...', 'VERIFYING IDENTITY...'];
-
-            const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    completeScan();
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 8;
+                if (progress >= 85) {
+                    clearInterval(progressInterval);
+                    captureAndVerify();
                 }
                 progressBar.style.width = progress + '%';
-                statusText.innerText = statuses[Math.min(Math.floor(progress / 25), statuses.length - 1)];
-            }, 300);
+                statusText.innerText = 'ALIGNING SENSORS...';
+            }, 200);
+        }
 
-            async function completeScan() {
-                statusText.innerText = 'VERIFICATION COMPLETE';
-                statusText.classList.remove('text-primary');
-                statusText.classList.add('text-emerald-400');
-                progressBar.classList.remove('bg-primary');
-                progressBar.classList.add('bg-emerald-500');
+        async function captureAndVerify() {
+            log("Capturing pattern...");
+            statusText.innerText = 'CAPTURING PATTERN...';
+            progressBar.style.width = '90%';
 
-                try {
-                    await fetch('/api/client/iris/verify', { method: 'POST' });
-                } catch (err) {
-                    console.error('Failed to persist iris verification state', err);
+            try {
+                const context = canvas.getContext('2d');
+                context.setTransform(1, 0, 0, 1, 0, 0);
+                context.scale(-1, 1);
+                context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/jpeg', 0.8);
+
+                log("Processing unique biometric signature...");
+                const response = await fetch('/api/client/iris/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    progressBar.style.width = '100%';
+                    statusText.innerText = 'IDENTITY VERIFIED';
+                    statusText.className = 'text-xs font-bold font-mono tracking-widest text-emerald-400';
+                    progressBar.className = 'h-full bg-emerald-500 w-full transition-all duration-300 rounded-full';
+                    systemStatus.innerText = 'VERIFIED';
+                    
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+
+                    log("Identity verified. Redirecting to final review...");
+                    setTimeout(() => { window.location.href = '/client_onboarding'; }, 1500);
+                } else {
+                    handleError(data.message || 'Verification failed');
                 }
-
-                setTimeout(() => { window.location.href = '/client_dashboard'; }, 1500);
+            } catch (err) {
+                console.error("Verification error:", err);
+                handleError('Biometric network sync failed.');
             }
+        }
+
+        function handleError(msg) {
+            isProcessing = false;
+            scanLine.classList.add('hidden');
+            scanStatus.classList.remove('opacity-100');
+            progressBar.style.width = '0%';
+            instruction.innerText = 'Error: ' + msg;
+            instruction.className = 'text-sm font-bold text-red-500 uppercase tracking-tight';
+            startBtn.disabled = false;
+            startBtn.innerText = 'Try Again';
+            systemStatus.innerText = 'FAILURE';
+            systemStatus.classList.remove('text-emerald-500');
+            systemStatus.classList.add('text-red-500');
         }
     </script>
 </body>
