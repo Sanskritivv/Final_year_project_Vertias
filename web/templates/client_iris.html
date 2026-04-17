@@ -126,18 +126,18 @@
 
                     <div id="scanner-visual" class="relative size-full flex items-center justify-center overflow-hidden rounded-3xl bg-slate-800">
                         <!-- Camera Feed -->
-                        <video id="webcam" autoplay playsinline class="absolute inset-0 size-full object-cover grayscale opacity-0 transition-opacity duration-700"></video>
+                        <video id="webcam" autoplay playsinline class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700 -scale-x-100"></video>
                         
                         <span id="eye-placeholder" class="material-symbols-outlined text-[160px] text-primary iris-glow transition-opacity duration-300">remove_red_eye</span>
                         <div id="scan-line" class="scanner-line hidden z-10"></div>
                     </div>
 
                     <!-- Status overlay -->
-                    <div id="scan-status" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 z-30 pointer-events-none">
-                        <div id="progress-container" class="w-44 h-1 bg-slate-700 rounded-full mb-4 overflow-hidden">
-                            <div id="progress-bar" class="h-full bg-primary w-0 transition-all duration-300 rounded-full"></div>
+                    <div id="scan-status" class="absolute inset-0 flex flex-col items-center justify-end pb-8 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent opacity-0 transition-opacity duration-300 z-30 pointer-events-none">
+                        <div id="progress-container" class="w-44 h-1 bg-slate-700/50 rounded-full mb-4 overflow-hidden">
+                            <div id="progress-bar" class="h-full bg-primary w-0 transition-all duration-300 rounded-full shadow-[0_0_10px_theme('colors.primary')]"></div>
                         </div>
-                        <p id="status-text" class="text-xs font-bold font-mono tracking-widest text-primary">INITIALIZING...</p>
+                        <p id="status-text" class="text-xs font-bold font-mono tracking-widest text-white drop-shadow-md">INITIALIZING...</p>
                     </div>
                 </div>
             </div>
