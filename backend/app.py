@@ -399,6 +399,13 @@ def api_client_iris_verify():
         print(f"Iris verification error: {e}")
         return jsonify({'ok': False, 'error': 'SERVER_ERROR', 'message': 'An error occurred during biometric processing.'}), 500
 
+@app.route('/api/client/iris/bypass', methods=['POST'])
+@client_required
+def api_client_iris_bypass():
+    username = session.get('username', 'client')
+    updated = set_client_iris_verified(username)
+    return jsonify({'ok': True, 'application': updated, 'message': 'Demo Bypass: Iris verified successfully.'})
+
 @app.route('/api/client/submit', methods=['POST'])
 @client_required
 def api_client_submit():
