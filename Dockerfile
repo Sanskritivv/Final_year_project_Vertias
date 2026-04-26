@@ -1,13 +1,14 @@
-# 1. Use a slim version of Python to keep the image small and secure
-FROM python:3.11-slim
+# 1. Use an explicit Debian-based slim image
+FROM python:3.11-slim-bookworm
 
 # 2. Set the working directory inside the container
 WORKDIR /app
 
-# 3. Install system dependencies for OpenCV
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+# 3. Improved system dependencies for OpenCV
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
+    libgl1 \
     libglib2.0-0 \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # 4. Copy only the requirements first (optimizes build speed)
