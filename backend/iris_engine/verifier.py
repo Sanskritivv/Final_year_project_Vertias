@@ -15,20 +15,28 @@ class IrisVerifier:
     
     def __init__(self):
         self.processor = IrisProcessor()
-        # Initialize a generic ResNet50 for feature extraction (Demo mode)
-        try:
-            self.model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
-            self.model.eval()
-            print("Iris Verifier Engine: Loaded ResNet50 Backbone.")
-        except Exception as e:
-            print(f"Warning: Could not load ResNet50 weights: {e}")
-            self.model = None
+        # Delay model loading to save RAM on startup (Render Free Tier optimization)
+        self.model = None
 
         self.transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
+
+    def _load_model(self):
+        """Lazy loads the model only when needed."""
+        if self.model is not None:
+            return
+
+        try:
+            print("Iris Verifier Engine: Lazy loading ResNet50 Backbone...")
+            self.model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
+            self.model.eval()
+            print("Iris Verifier Engine: Model loaded successfully.")
+        except Exception as e:
+            print(f"Warning: Could not load ResNet50 weights (likely RAM limit): {e}")
+            self.model = "DUMMY"
 
     def verify(self, image_bgr):
         """
@@ -46,7 +54,8 @@ class IrisVerifier:
 
         # 2. Feature Extraction (Simulate working system)
         score = 0.0
-        if self.model:
+        self._load_model()
+        if self.model and self.model != "DUMMY":
             try:
                 # Convert normalized strip to RGB for ResNet
                 rgb_strip = cv2.cvtColor(normalized_strip, cv2.COLOR_GRAY2RGB)
