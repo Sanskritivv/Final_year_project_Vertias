@@ -82,6 +82,7 @@ def init_db():
         final_review_ready INTEGER DEFAULT 0,
         status TEXT DEFAULT 'Draft',
         documents_json TEXT DEFAULT '{}',
+        has_logged_in INTEGER DEFAULT 0,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     ''')
@@ -96,6 +97,13 @@ def init_db():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     ''')
+    
+    # Migration for client_applications: add has_logged_in
+    try:
+        cursor.execute("SELECT has_logged_in FROM client_applications LIMIT 1")
+    except sqlite3.OperationalError:
+        print("Migrating client_applications table...")
+        cursor.execute("ALTER TABLE client_applications ADD COLUMN has_logged_in INTEGER DEFAULT 0")
     
     # Check if we need to seed
     cursor.execute('SELECT COUNT(*) FROM applications')
@@ -400,6 +408,39 @@ def get_support_tickets(username):
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+def handle_client_login(username):
+    """
+    Logic for conditional login flow:
+    - On first login: has_logged_in = 0 -> 1.
+    - On returning login: skip documentation step.
+    """
+    conn = get_db_connection()
+    row = _get_or_create_client_application_row(conn, username)
+    app = dict(row)
+    
+    if app.get('has_logged_in', 0) == 1:
+        # Returning user: auto-complete documentation if not already done
+        if not app.get('doc_step_complete'):
+            print(f"Returning user {username}: Skipping documentation step.")
+            # Use existing mark_client_digilocker logic to "fake" doc completion
+            # (Or just set the bit directly)
+            conn.execute(
+                "UPDATE client_applications SET doc_step_complete = 1 WHERE username = ?",
+                (username,)
+            )
+            conn.commit()
+    else:
+        # First login: mark that they have logged in now
+        print(f"First-time user {username}: Enforcing full sequence.")
+        conn.execute(
+            "UPDATE client_applications SET has_logged_in = 1 WHERE username = ?",
+            (username,)
+        )
+        conn.commit()
+    
+    conn.close()
+    return True
 
 if __name__ == "__main__":
     init_db()

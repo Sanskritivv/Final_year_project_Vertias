@@ -17,7 +17,8 @@ from database import (
     set_client_iris_verified,
     mark_client_digilocker,
     create_support_ticket,
-    get_support_tickets
+    get_support_tickets,
+    handle_client_login
 )
 from iris_engine.verifier import IrisVerifier, decode_image
 
@@ -154,12 +155,20 @@ def login():
         if user and user['password'] == password:
             session['user_role'] = user['role']
             session['username'] = username
+            
+            if user['role'] == 'client':
+                handle_client_login(username)
+                
             redirect_url = '/dashboard' if user['role'] == 'company' else '/client_dashboard'
             return jsonify({'ok': True, 'redirect': redirect_url})
         # Allow demo bypass: any non-empty credentials route by role selection
         if username and password:
             session['user_role'] = role
             session['username'] = username
+            
+            if role == 'client':
+                handle_client_login(username)
+                
             redirect_url = '/dashboard' if role == 'company' else '/client_dashboard'
             return jsonify({'ok': True, 'redirect': redirect_url})
         return jsonify({'ok': False, 'error': 'Please enter your credentials.'}), 401
