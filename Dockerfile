@@ -4,20 +4,27 @@ FROM python:3.11-slim
 # 2. Set the working directory inside the container
 WORKDIR /app
 
-# 3. Copy only the requirements first (optimizes build speed)
+# 3. Install system dependencies for OpenCV
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# 4. Copy only the requirements first (optimizes build speed)
 COPY requirements.txt .
 
-# 4. Install dependencies
+# 5. Install dependencies
 # --no-cache-dir keeps the image size small
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copy the rest of your underwriting code
+# 6. Copy the rest of the code
 COPY . .
 
-# 6. Set environment variables (GCP Cloud Run expects port 8080)
-ENV PORT 8080
-ENV PYTHONUNBUFFERED True
+# 7. Set environment variables
+ENV PORT=8080
+ENV PYTHONUNBUFFERED=True
+ENV PYTHONPATH=/app/backend
 
-# 7. Start your application 
-# Replace 'main:app' with your actual file and app name (e.g., 'api:app')
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+# 8. Start your application 
+# Using 1 worker and 2 threads to stay within memory limits (512MB)
+CMD gunicorn --bind :$PORT --workers 1 --threads 2 --timeout 120 app:app

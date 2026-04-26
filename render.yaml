@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: veritas-backend
+    env: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /login
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PORT
+        value: 8080
